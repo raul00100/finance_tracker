@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useShared } from "../parts/shared";
-import '../css/main.css';
+// import '../css/main.css';
 import CryptoLineGraph from '../statistic/react-chart'
 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
+import SideAnimation from "../parts/sideAnimation";
+
 
 
 async function currRates(baseCurrency = 'USD') {
@@ -66,6 +68,10 @@ async function fetchFiatHistory(baseCurrency, targetCurrencies, startDate, endDa
 }
 
 
+const headerThird = "font-mono text-xl mb-10";
+const box = "border-2 rounded-lg p-5";
+
+
 export default function HomePage() {
   const { balance, setBalance} = useShared('');
   const [submitted, setSubmitted] = useState(false);
@@ -76,6 +82,18 @@ export default function HomePage() {
   const [error, setError] = useState(null);
   const [cryptoHistories, setCryptoHistories] = useState({}); 
   const [fiat, setFiat] = useState([]);
+
+
+  const [cryptoIndex, setCryptoIndex] = useState(0);
+  const cryptoSymbols = Object.keys(cryptoHistories);
+  const currentSymbol = cryptoSymbols[cryptoIndex];
+  const currentHistory = cryptoHistories[currentSymbol];
+  const [direction, setDirection] = useState(1); 
+
+  const [fiatIndex, setFiatIndex] = useState(0);
+  const [fiatDirection, setFiatDirection] = useState(1);
+  const currentFiat = fiat[fiatIndex];
+
 
   const handleBalance = (e) => {
     setBalance(e.target.value);
@@ -254,27 +272,55 @@ const convertedBalance = selected === baseCurrency
       </div>
       )}
 
-      <h3 className="font-mono text-xl mb-10">Crypto Currency</h3>
-      <div className="currency running-text mb-20 flex flex-row">
-        {Object.entries(cryptoHistories).map(([symbol, history]) => (
-          <div className="currency-item  running-text border-2 mr-7" key={symbol}>
-            <h3>{symbol.replace('USDT', '')}: ${crypto[symbol.replace('USDT', '').toLowerCase()]}</h3>
-            <CryptoLineGraph 
-              data={history} 
-              label={symbol.replace('USDT', '')} 
-            />
-          </div>
-        ))}
-      </div>
+      <div className="flex flex-row mt-20">
 
-      <h3>The graph of fiat history</h3>
-      <div className="currency">
-        {fiat.map((currencyData)=> (
-          <div className="currency-item" key = {currencyData.currency}>
-            <h3>{baseCurrency} = {rates && rates[currencyData.currency] ? rates[currencyData.currency] : ""} {currencyData.currency}</h3>
-            <CryptoLineGraph data={currencyData.data} label={currencyData.currency} />
-          </div>
-        ))}
+        <h3 className={headerThird}>Crypto Currency:</h3>
+        <SideAnimation
+          onPrev={() => {
+            setDirection(-1);
+            setCryptoIndex((prev) => (prev - 1 + cryptoSymbols.length) % cryptoSymbols.length);
+          }}
+          onNext={() => {
+            setDirection(1);
+            setCryptoIndex((prev) => (prev + 1) % cryptoSymbols.length);
+          }}
+          direction={direction}
+          selectedKey={currentSymbol} // добавь этот проп
+        >
+          {currentSymbol && currentHistory && (
+            <div className={box} key={currentSymbol}>
+              <h3>{currentSymbol.replace('USDT', '')}: ${crypto[currentSymbol.replace('USDT', '').toLowerCase()]}</h3>
+              <CryptoLineGraph 
+                data={currentHistory} 
+                label={currentSymbol.replace('USDT', '')} 
+              />
+            </div>
+          )}
+        </SideAnimation>
+
+        <h3 className={headerThird}>The graph of fiat history:</h3>
+        <SideAnimation
+          onPrev={() => {
+            setFiatDirection(-1);
+            setFiatIndex((prev) => (prev - 1 + fiat.length) % fiat.length);
+          }}
+          onNext={() => {
+            setFiatDirection(1);
+            setFiatIndex((prev) => (prev + 1) % fiat.length);
+          }}
+          direction={fiatDirection}
+          selectedKey={currentFiat ? currentFiat.currency : "fiat"}
+        >
+          {currentFiat && (
+            <div className={box} key={currentFiat.currency}>
+              <h3>
+                {baseCurrency} = {rates && rates[currentFiat.currency] ? rates[currentFiat.currency] : ""} {currentFiat.currency}
+              </h3>
+              <CryptoLineGraph data={currentFiat.data} label={currentFiat.currency} />
+            </div>
+          )}
+        </SideAnimation>
+
       </div>
   
     </div>
