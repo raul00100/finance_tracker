@@ -29,6 +29,9 @@ export function SharedProvider({ children }) {
     }
   });
 
+  const allExpense = transaction.length > 0 && transaction.every(t => t.type === 'expense');
+  const allIncome = transaction.length > 0 && transaction.every(t => t.type === 'income');
+
   useEffect(() => {
     localStorage.setItem('transaction', JSON.stringify(transaction));
   }, [transaction]);
@@ -40,6 +43,8 @@ export function SharedProvider({ children }) {
         setBalance,
         transaction,
         setTransaction,
+        allExpense,
+        allIncome,
       }}
     >
       {children}

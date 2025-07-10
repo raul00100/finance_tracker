@@ -29,8 +29,8 @@ export default function CryptoLineGraph({ data, label }) {
       {
         label: `${label} Price`,
         data: data.map(item => item.price), // Prices for the y-axis
-        borderColor: 'rgba(75, 192, 192, 1)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: '#27187e',
+        backgroundColor: '#758bfd',
         tension: 0.4, // Smooth curve
       },
     ],
@@ -51,7 +51,7 @@ export default function CryptoLineGraph({ data, label }) {
   };
 
   return (
-    <div style={{ height: '270px', width: '300px' }}> {/* Set height explicitly */}
+    <div style={{ height: '300px', width: '340px' }}> {/* Set height explicitly */}
       <Line data={chartData} options={options} />
     </div>
   );

@@ -3,12 +3,15 @@ import ReactDOM from 'react-dom/client';
 //import Test from './components/parts/test'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import MainLayout from './components/parts/mainLayout'; // Import the layout component
-import HomePage from './components/pages/home_page';
-import Transaction from './components/pages/transaction';
-import Story from './components/pages/story';
-import Statistics from './components/pages/statistic';
+import HomePage from './components/pages/home/homeMain';
+import Transaction from './components/pages/addTransactions/transactionMain';
+import Story from './components/pages/transactionStory/storyMain';
+import Statistics from './components/pages/statistic/statisticMain'; 
 import ErrorHandler from './components/parts/errorHandler';
 import './index.css'
+
+// import { ChakraProvider } from "@chakra-ui/react";
+
 
 import { SharedProvider } from './components/parts/shared';
 
@@ -29,11 +32,10 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <SharedProvider>
-      <RouterProvider router={router} />
-    </SharedProvider>
+    {/* <ChakraProvider> */}
+      <SharedProvider>
+        <RouterProvider router={router} />
+      </SharedProvider>
+    {/* </ChakraProvider> */}
   </React.StrictMode>
-  // <React.StrictMode>
-  //   <Test></Test>
-  // </React.StrictMode>
 );

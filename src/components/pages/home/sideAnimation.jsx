@@ -118,8 +118,8 @@ const container = {
 }
 
 const box = {
-    width: 345,
-    height: 150,
+    width: 385,
+    height: 300,
     backgroundColor: "#0cdcf7",
     borderRadius: "10px",
 }
@@ -135,4 +135,4 @@ const button = {
     position: "relative",
     zIndex: 1,
     outlineOffset: 2,
-}
+} 
