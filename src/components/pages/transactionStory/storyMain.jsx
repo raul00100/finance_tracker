@@ -2,17 +2,13 @@ import React, { useState } from "react";
 import { useShared } from "../../parts/shared";
 import TransactionList from "./transactionList";
 import TransactionTabs from "./transactionTab";
+import { expenseOption, incomeOption, financeType } from "../../parts/options";
 
 export default function Story() {
   const { balance, setBalance, transaction, setTransaction } = useShared();
   const [editId, setEditId] = useState(null);
   const [editDetails, setEditDetails] = useState({ type: "", amount: "", category: "" });
   const [tabValue, setTabValue] = useState(0);
-
-  const categoryOptions = {
-    income: ["Salary", "Freelance", "Investments", "Gifts", "Other Income"],
-    expense: ["Food", "Transport", "Housing", "Entertainment", "Healthcare", "Other Expenses"],
-  };
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -100,7 +96,9 @@ export default function Story() {
       editDetails={editDetails}
       setEditDetails={setEditDetails}
       handleEditSubmit={handleEditSubmit}
-      categoryOptions={categoryOptions}
+      expenseOption={expenseOption}
+      incomeOption={incomeOption}
+      financeType={financeType}
       setEditId={setEditId}
     />
   ));

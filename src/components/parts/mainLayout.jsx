@@ -23,8 +23,8 @@ import { Outlet } from 'react-router-dom';
 
 export default function MainLayout() {
   return (
-    <div className="bg-[#f1f2f6] h-screen flex">
-      <div className='flex mr-[50px] w-[172px]'>
+    <div className="bg-[#EFEFEF] h-screen flex">
+      <div className='flex mr-[50px] w-[180px]'>
         <VerticalTabs/>
       </div>
       <div className='overflow-auto w-screen'>

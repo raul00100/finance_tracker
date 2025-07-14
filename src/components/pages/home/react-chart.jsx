@@ -29,8 +29,8 @@ export default function CryptoLineGraph({ data, label }) {
       {
         label: `${label} Price`,
         data: data.map(item => item.price), // Prices for the y-axis
-        borderColor: '#27187e',
-        backgroundColor: '#758bfd',
+        borderColor: '#EF9651',
+        backgroundColor: '#EC5228',
         tension: 0.4, // Smooth curve
       },
     ],

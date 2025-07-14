@@ -4,6 +4,8 @@ import CryptoLineGraph from './react-chart'
 import SideAnimation from "./sideAnimation";
 import AttachMoneyRoundedIcon from '@mui/icons-material/AttachMoneyRounded';
 import generalStyle from "../../css/generalStyle";
+import AutorenewIcon from '@mui/icons-material/Autorenew';
+
 
 
 async function currRates(baseCurrency = 'USD') {
@@ -220,8 +222,15 @@ export default function HomePage() {
     : new Intl.NumberFormat('en-US', { useGrouping: true }).format((balance * rates[selected]).toFixed(2));
 
     if (error) return <div className="error">Error: {error}</div>;
-    if (!rates) return <div className="loading">Loading...</div>;
-
+    if (!rates) return <div className="loading"> 
+      <AutorenewIcon className="animate-spin text-3xl" />
+    </div>;
+    // if (rates) return (
+    // <div className="flex flex-col items-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"> 
+    //   <p className="text-3xl font-semibold mr-4">Loading</p>
+    //   <AutorenewIcon className="animate-spin" sx={{fontSize: 50}} />
+    // </div>
+    // )
 
 
   return (
@@ -370,4 +379,4 @@ export default function HomePage() {
 // // 10 - fix bugs in the chrome console✅
 // // 11 - add time filter in story 
 // // 12 - 1 add additional categories and subcategories ✅, 2 - type of payment ✅ and 3 - and search function for a category
-// убрать сообщение лоадинг и вместо него сделать анимацию загрузки с икнонокой
+// убрать сообщение лоадинг и вместо него сделать анимацию загрузки с икнонокой ✅

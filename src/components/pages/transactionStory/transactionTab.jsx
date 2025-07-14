@@ -44,11 +44,11 @@ export default function TransactionTabs({ tabValue, handleTabChange, panels }) {
               fontWeight: 600, // Make all tab labels thicker
             },
             '& .MuiTab-root.Mui-selected': {
-              color: '#6366f1', // Tailwind indigo-500 hex
+              color: '#EF9651', // Tailwind indigo-500 hex
               fontWeight: 700, // Even bolder for selected tab
             },
             '& .MuiTabs-indicator': {
-              backgroundColor: '#6366f1', // indicator color
+              backgroundColor: '#EC5228', // indicator color
             },
           }}
         >

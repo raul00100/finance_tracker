@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useShared } from "../../parts/shared";
 import FormSelect from "./categories";
 import dayjs from 'dayjs';
-// import Stack from '@mui/material/Stack';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
@@ -15,9 +14,8 @@ import Select from '@mui/material/Select';
 import generalStyle from "../../css/generalStyle";
 import AttachMoneyRoundedIcon from '@mui/icons-material/AttachMoneyRounded';
 import AnnouncementRoundedIcon from '@mui/icons-material/AnnouncementRounded';
-// import KeyboardTabIcon from '@mui/icons-material/KeyboardTab';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
-
+import { expenseOption, incomeOption, financeType } from "../../parts/options";
 
 
 
@@ -37,25 +35,6 @@ export default function Transaction() {
     const [subCategory, setSubCategory] = useState('');
     const [payment, setPayment] = useState('');
     
-
-  const expenseOption = {
-    food: ['groceries', 'restaurant', 'fast food', 'bar'],
-    shopping: ['clothes', 'jewelry', 'gifts', 'electronics', 'healthcare', 'for home'],
-    housing: ['rent', 'mortgage', 'bill', 'repair'],
-    transport: ['public transport', 'taxi', 'flights'],
-    car: ['gas', 'parking', 'maintenance', 'rent', 'insurance'],
-    leisure: ['sport club', 'holidays', 'traveling', 'subscription', 'hobby', 'education', 'games', 'internet'],
-    payments: ['taxes', 'fines', 'fees'],
-    investments: ['real estate', 'savings', 'crypto', 'stocks']
-  };
-
-  const incomeOption = {
-    salary: ['job salary', 'freelance', 'tips'],
-    investments: ['profit %', 'dividends'], 
-    other: ['sale', 'rent', 'refund', 'gift']
-  };
-
-  const paymentType = ['cash', 'debit card', 'credit card', 'transfer', 'online payment']
 
     const handleTransaction = (e) => {
         e.preventDefault();
@@ -164,10 +143,10 @@ export default function Transaction() {
                     </div>
 
                     <div className={`${inputBox} relative items-center`}>
-                    <label className={`${labelStyle} mr-70`}>Amount:</label>
+                          <label className={`${labelStyle} mr-70`}>Amount:</label>
                         <span className="absolute left-2 top-9 text-gray-500">
                             <AttachMoneyRoundedIcon
-                            className={type === 'income' ? 'text-lime-600' : type === 'expense' ? 'text-rose-500' : ''}/>
+                            className={type === 'income' ? 'text-[#3F7D58]' : type === 'expense' ? 'text-[#EC5228]' : ''}/>
                         </span>
                         <input
                             type="number"
@@ -178,71 +157,69 @@ export default function Transaction() {
                         />
                     </div> 
 
-                    <div>
-                        <div className={inputBox}>
-                            <label className={labelStyle}>Category:</label>
-                            <FormSelect
-                            label="Category"
-                            value={category}
-                            onChange={(e) => {
-                                setCategory(e.target.value);
-                                setSubCategory('');
-                            }}
-                            options={type === 'income' ? Object.keys(incomeOption) : Object.keys(expenseOption)}
-                            sx={{
-                                border: '2px solid black',
-                                height: '44px',
-                                width: 330,
-                                marginLeft: 1,
-                                boxShadow: '4px 4px 0px 0px #000',
-                                fontSize: '1.125rem',
-                                fontWeight: 500,
-                                '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                border: 'none',
-                                },
-                                '& .Mui-focused': {
-                                boxShadow: 'none',
-                                },
-                                '& .MuiOutlinedInput-notchedOutline': {
-                                border: 'none',
-                                },
-                            }}
-                            />
-                        </div>
-                        
-                        <div className={inputBox}>
-                            <label className={labelStyle}>Subcategory:</label>
-                            <FormSelect
-                            label="SubCategory"
-                            value={subCategory}
-                            onChange={(e) => setSubCategory(e.target.value)}
-                            options={
-                                category
-                                ? type === 'income'
-                                    ? incomeOption[category] || []
-                                    : expenseOption[category] || []
-                                : []
-                            }
-                            sx={{
-                                border: '2px solid black',
-                                height: '44px',
-                                width: 330,
-                                marginLeft: 1,
-                                boxShadow: '4px 4px 0px 0px #000',
-                                fontSize: '1.125rem',
-                                fontWeight: 500,
-                                '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                border: 'none',
-                                },
-                                '& .Mui-focused': {
-                                boxShadow: 'none',
-                                },
-                                '& .MuiOutlinedInput-notchedOutline': {
-                                border: 'none',
-                                },
-                            }}
-                            className="w-80" />
-                        </div>
+                    <div className={inputBox}>
+                        <label className={labelStyle}>Category:</label>
+                        <FormSelect
+                        label="Category"
+                        value={category}
+                        onChange={(e) => {
+                            setCategory(e.target.value);
+                            setSubCategory('');
+                        }}
+                        options={type === 'income' ? Object.keys(incomeOption) : Object.keys(expenseOption)}
+                        sx={{
+                            border: '2px solid black',
+                            height: '44px',
+                            width: 330,
+                            marginLeft: 1,
+                            boxShadow: '4px 4px 0px 0px #000',
+                            fontSize: '1.125rem',
+                            fontWeight: 500,
+                            '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+                            border: 'none',
+                            },
+                            '& .Mui-focused': {
+                            boxShadow: 'none',
+                            },
+                            '& .MuiOutlinedInput-notchedOutline': {
+                            border: 'none',
+                            },
+                        }}
+                        />
+                    </div>
+                    
+                    <div className={inputBox}>
+                        <label className={labelStyle}>Subcategory:</label>
+                        <FormSelect
+                        label="SubCategory"
+                        value={subCategory}
+                        onChange={(e) => setSubCategory(e.target.value)}
+                        options={
+                            category
+                            ? type === 'income'
+                                ? incomeOption[category] || []
+                                : expenseOption[category] || []
+                            : []
+                        }
+                        sx={{
+                            border: '2px solid black',
+                            height: '44px',
+                            width: 330,
+                            marginLeft: 1,
+                            boxShadow: '4px 4px 0px 0px #000',
+                            fontSize: '1.125rem',
+                            fontWeight: 500,
+                            '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+                            border: 'none',
+                            },
+                            '& .Mui-focused': {
+                            boxShadow: 'none',
+                            },
+                            '& .MuiOutlinedInput-notchedOutline': {
+                            border: 'none',
+                            },
+                        }}
+                        className="w-80" />
                     </div>
 
                     <div className={`${inputBox} w-80`}>
@@ -357,7 +334,7 @@ export default function Transaction() {
                         <MenuItem value="">
                         <em>None</em>
                         </MenuItem>
-                        {paymentType.map((pay) => (
+                        {financeType.map((pay) => (
                         <MenuItem key={pay} value={pay}>
                             {pay}
                         </MenuItem>
@@ -386,15 +363,15 @@ export default function Transaction() {
                 ) : (
                     <div className="flex flex-row items-center">
                     {transaction.slice(-3).reverse().map((t) => (
-                        <li key={t.id} className="mb-8 p-5 w-67 ml-5 mr-5 rounded-2xl bg-[#f1f2f6] shadow-[6px_6px_16px_#bebebe,-10px_-10px_16px_#ffffff]">
+                        <li key={t.id} className="mb-8 p-5 w-75 ml-5 mr-5 rounded-2xl bg-[#f1f2f6] shadow-[6px_6px_16px_#bebebe,-10px_-10px_16px_#ffffff]">
 
                             {t.type === 'income' ? (
                                 <p>
-                                    <strong>Type:</strong> {t.type} <span className="text-green-600 italic"> + {t.amount}</span>
+                                    <strong>Type:</strong> {t.type} <span className="text-[#3F7D58] italic"> + {t.amount}</span>
                                 </p>
                                 ) : (
                                 <p>
-                                    <strong>Type:</strong> {t.type} <span className="text-red-600 italic"> - {t.amount}</span>
+                                    <strong>Type:</strong> {t.type} <span className="text-[#EC5228] italic"> - {t.amount}</span>
                                 </p>
                             )}
                             <p>
@@ -422,7 +399,7 @@ export default function Transaction() {
                     <div className="mb-7">
                         {/* < KeyboardTabIcon className="animate-pulse mb-2 mr-1" sx={{fontSize: 35}}/> */}
                         <KeyboardReturnIcon className="rotate-[180deg] animate-pulse mb-2 mr-1" sx={{fontSize: 37}} />
-                        <Link to='/story'  className="animate-pulse text-2xl font-bold bg-gradient-to-r from-indigo-500 to-gray-900 bg-clip-text text-transparent hover:border-blue-700 hover:border-b-2 transition-all duration-50">See more...</Link>
+                        <Link to='/story'  className="animate-pulse text-2xl font-bold bg-gradient-to-r from-[#3F7D58] to-gray-900 bg-clip-text text-transparent hover:border-lime-700 hover:border-b-2 transition-all duration-50">See more...</Link>
                     </div>
                     </div>
                 )}
@@ -434,6 +411,6 @@ export default function Transaction() {
 
 // менять цвент иконы в зависимости от типа транзкации ✅
 // поменять дизайн сообщение no transactions yet
-// сделать небольшую анимацию для полей ввода как у кнопки (пиздец как долго)
+// сделать небольшую анимацию для полей ввода как у кнопки (пиздец как долго) (реально как долго, нахуй я этим вообще занимаюсь)
 // возмодно поменять стиль самого контейнера с инфой чтобы не различался дизайн
-// сделать контейнер с инфой фикисрованного размера
+// сделать контейнер с инфой фикисрованного размера ✅
