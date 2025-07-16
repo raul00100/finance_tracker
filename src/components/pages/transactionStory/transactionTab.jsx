@@ -1,7 +1,19 @@
+import React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import PropTypes from "prop-types";
+
+CustomTabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+TransactionTabs.propTypes = {
+  tabValue: PropTypes.number.isRequired,
+  handleTabChange: PropTypes.func.isRequired,
+  panels: PropTypes.arrayOf(PropTypes.node).isRequired,
+};
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -17,12 +29,6 @@ function CustomTabPanel(props) {
     </div>
   );
 }
-
-CustomTabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
 
 function a11yProps(index) {
   return {
@@ -40,15 +46,15 @@ export default function TransactionTabs({ tabValue, handleTabChange, panels }) {
           onChange={handleTabChange}
           aria-label="transaction tabs"
           sx={{
-            '& .MuiTab-root': {
+            "& .MuiTab-root": {
               fontWeight: 600, // Make all tab labels thicker
             },
-            '& .MuiTab-root.Mui-selected': {
-              color: '#EF9651', // Tailwind indigo-500 hex
+            "& .MuiTab-root.Mui-selected": {
+              color: "#EF9651", // Tailwind indigo-500 hex
               fontWeight: 700, // Even bolder for selected tab
             },
-            '& .MuiTabs-indicator': {
-              backgroundColor: '#EC5228', // indicator color
+            "& .MuiTabs-indicator": {
+              backgroundColor: "#EC5228", // indicator color
             },
           }}
         >

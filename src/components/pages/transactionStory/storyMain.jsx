@@ -7,7 +7,11 @@ import { expenseOption, incomeOption, financeType } from "../../parts/options";
 export default function Story() {
   const { balance, setBalance, transaction, setTransaction } = useShared();
   const [editId, setEditId] = useState(null);
-  const [editDetails, setEditDetails] = useState({ type: "", amount: "", category: "" });
+  const [editDetails, setEditDetails] = useState({
+    type: "",
+    amount: "",
+    category: "",
+  });
   const [tabValue, setTabValue] = useState(0);
 
   const handleTabChange = (event, newValue) => {
@@ -19,21 +23,21 @@ export default function Story() {
     if (tabIdx === 1) return transaction.filter((t) => t.type === "income");
     return transaction.filter((t) => t.type === "expense");
   };
- const handleDeleteAll = (id) => {
-        const totalIncome = transaction
-        .filter((t)=> t.type === 'income')
-        .reduce((sum, t)=> sum + t.amount, 0);
-        const totalExpense = transaction
-        .filter((t)=> t.type === 'expense')
-        .reduce((sum, t)=> sum + t.amount, 0);
+  const handleDeleteAll = () => {
+    const totalIncome = transaction
+      .filter((t) => t.type === "income")
+      .reduce((sum, t) => sum + t.amount, 0);
+    const totalExpense = transaction
+      .filter((t) => t.type === "expense")
+      .reduce((sum, t) => sum + t.amount, 0);
 
-        const newBalance = balance - totalIncome + totalExpense;
-        setBalance(newBalance);
-        localStorage.setItem('balance', newBalance);
+    const newBalance = balance - totalIncome + totalExpense;
+    setBalance(newBalance);
+    localStorage.setItem("balance", newBalance);
 
-        setTransaction([]);
-        localStorage.removeItem('transaction');
-    };
+    setTransaction([]);
+    localStorage.removeItem("transaction");
+  };
 
   const handleDelete = (id) => {
     const newTransaction = transaction.filter((t) => t.id !== id);
@@ -74,7 +78,9 @@ export default function Story() {
     }
 
     const updatedTransaction = transaction.map((t) =>
-      t.id === editId ? { ...t, ...editDetails, amount: Number(editDetails.amount) } : t
+      t.id === editId
+        ? { ...t, ...editDetails, amount: Number(editDetails.amount) }
+        : t
     );
     setTransaction(updatedTransaction);
     localStorage.setItem("transaction", JSON.stringify(updatedTransaction));
@@ -88,6 +94,7 @@ export default function Story() {
 
   const panels = [0, 1, 2].map((tabIdx) => (
     <TransactionList
+      key={tabIdx}
       transactions={getFilteredTransactions(tabIdx)}
       handleEdit={handleEdit}
       handleDelete={handleDelete}
@@ -114,8 +121,3 @@ export default function Story() {
     </div>
   );
 }
-
-//сделать редезайн самой страницы
-//сделать краткую карточку для каждого элемента и покащзываать всю инфу при наведение или любом другом дейтсвие 
-//сделать рпедупредение при удаление
-// добавить все поля при редактировании
