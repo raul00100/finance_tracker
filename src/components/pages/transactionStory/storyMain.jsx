@@ -111,8 +111,7 @@ export default function Story() {
   ));
 
   return (
-    <div className="">
-      <h2 className="text-3xl font-mono mb-8 mt-8">Transaction Story</h2>
+    <div className="mt-5">
       <TransactionTabs
         tabValue={tabValue}
         handleTabChange={handleTabChange}

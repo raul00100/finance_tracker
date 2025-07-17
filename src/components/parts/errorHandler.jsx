@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import goofyImage from "../images/goofy.jpg"; // Import the image
+import goofyImage from "../images/goofy.jpg";
 
 export default function ErrorHandler() {
   return (

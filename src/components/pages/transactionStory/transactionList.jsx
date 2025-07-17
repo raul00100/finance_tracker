@@ -1,21 +1,22 @@
 import React, { useState } from "react";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import TextField from "@mui/material/TextField";
 import AnnouncementRoundedIcon from "@mui/icons-material/AnnouncementRounded";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import generalStyle from "../../css/generalStyle";
 import AttachMoneyRoundedIcon from "@mui/icons-material/AttachMoneyRounded";
-import FormSelect from "../addTransactions/categories";
 import InputAdornment from "@mui/material/InputAdornment";
 import PropTypes from "prop-types";
+
+import FormSelectGroup from "../../parts/input/FormSelectGroup";
+import FormInputGroup from "../../parts/input/FormInputGroup";
+
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import dayjs from "dayjs";
 
 const {
   buttonStyleGreen,
   buttonStyleOrange,
-  inputStyle,
   noTransactions,
   inputBox,
   labelStyle,
@@ -23,7 +24,7 @@ const {
 
 const spanStyle = "font-semibold";
 const buttonStyleDelete =
-  "text-white border-black bg-red-600 px-3 active:bg-red-400 font-bold shadow-[4px_4px_0px_0px_#000] bg-[#EC5228] active:bg-orange-400 active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all duration-200 cursor-pointer border-2";
+  "text-white ml-3 border-black bg-red-600 px-3 h-11 active:bg-red-400 font-bold shadow-[4px_4px_0px_0px_#000] bg-[#EC5228] active:bg-orange-400 active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all duration-200 cursor-pointer border-2";
 const buttonStyleAdd =
   "text-white m-2 border-black bg-zinc-400 hover:bg-[#3F7D58] active:bg-emerald-600 px-3 mb-2 font-bold shadow-[4px_4px_0px_0px_#000] bg-[#EC5228] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all duration-200 cursor-pointer border-2";
 
@@ -91,68 +92,24 @@ export default function TransactionList({
                 <form onSubmit={handleEditSubmit} className="mb-3 border-b-2">
                   <div className={inputBox}>
                     <label className={labelStyle}>Transaction Type:</label>
-                    <FormControl
-                      sx={{
-                        border: "2px solid black",
-                        height: "44px",
-                        width: 327,
-                        marginLeft: 1,
-                        boxShadow: "4px 4px 0px 0px #000",
-                        fontSize: "1.125rem",
-                        fontWeight: 500,
-                        "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          border: "none",
-                        },
-                        "& .Mui-focused": {
-                          boxShadow: "none",
-                        },
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          border: "none",
-                        },
-                      }}
-                      size="small"
-                      className="w-80"
-                    >
-                      <InputLabel
-                        id="demo-select-small-label"
-                        sx={{
-                          // Add top margin when label is shrunk (floating)
-                          "&.MuiInputLabel-shrink": {
-                            top: 1, // adjust this value for more/less gap
-                          },
-                          // Optionally, adjust default position too
-                          top: 1,
-                          background: "#f1f2f6", // optional, for better contrast
-                          px: 0.5, // optional, horizontal padding
-                        }}
-                      >
-                        Select:{" "}
-                      </InputLabel>
-                      <Select
-                        labelId="demo-select-small-label"
-                        id="demo-select-small"
-                        value={editDetails.type}
-                        label="Type"
-                        onChange={(e) =>
-                          setEditDetails({
-                            ...editDetails,
-                            type: e.target.value,
-                            category: "",
-                            subCategory: "",
-                          })
-                        }
-                        required
-                      >
-                        <MenuItem value="income">Income</MenuItem>
-                        <MenuItem value="expense">Expense</MenuItem>
-                      </Select>
-                    </FormControl>
+                    <FormSelectGroup
+                      label="Transaction Type"
+                      value={editDetails.type}
+                      onChange={(e) =>
+                        setEditDetails({
+                          ...editDetails,
+                          type: e.target.value,
+                          category: "",
+                          subCategory: "",
+                        })
+                      }
+                      options={["income", "expense"]}
+                    />
                   </div>
 
                   <div className={`${inputBox}`}>
-                    <label className={`${labelStyle} mr-70`}>Amount:</label>
-                    <TextField
-                      type="number"
+                    <label className={labelStyle}>Amount:</label>
+                    <FormInputGroup
                       value={editDetails.amount}
                       onChange={(e) =>
                         setEditDetails({
@@ -160,32 +117,7 @@ export default function TransactionList({
                           amount: e.target.value,
                         })
                       }
-                      // className={`${inputStyle} ml-2 w-82`}
-                      required
-                      sx={{
-                        border: "2px solid black",
-                        height: "44px",
-                        width: 330,
-                        marginLeft: 1,
-                        boxShadow: "4px 4px 0px 0px #000",
-                        fontSize: "1.125rem",
-                        fontWeight: 500,
-                        "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          border: "none",
-                        },
-                        "& .Mui-focused": {
-                          boxShadow: "none",
-                        },
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          border: "none",
-                        },
-                        "& .MuiInputBase-input": {
-                          paddingTop: "8px", // поднимает текст вверх
-                          fontSize: "18px", // увеличивает размер текста
-                          fontWeight: 500, // делает текст жирнее
-                          marginLeft: "-12px", // сдвигает иконку максимально влево
-                        },
-                      }}
+                      type="number"
                       InputProps={{
                         startAdornment: (
                           <InputAdornment
@@ -194,7 +126,7 @@ export default function TransactionList({
                               marginTop: "0px", // поднимает или опускает иконку
                               // marginLeft: '0px', // сдвигает иконку вправо/влево
                               marginBottom: 1.2,
-                              marginLeft: "-16px", // сдвигает иконку максимально влево
+                              marginLeft: "-33px", // сдвигает иконку максимально влево
                               // можно добавить другие параметры
                             }}
                           >
@@ -217,8 +149,7 @@ export default function TransactionList({
 
                   <div className={inputBox}>
                     <label className={labelStyle}>Category:</label>
-                    <FormSelect
-                      label="Category"
+                    <FormSelectGroup
                       value={editDetails.category}
                       onChange={(e) =>
                         setEditDetails({
@@ -232,31 +163,12 @@ export default function TransactionList({
                           ? Object.keys(incomeOption)
                           : Object.keys(expenseOption)
                       }
-                      sx={{
-                        border: "2px solid black",
-                        height: "44px",
-                        width: 330,
-                        marginLeft: 1,
-                        boxShadow: "4px 4px 0px 0px #000",
-                        fontSize: "1.125rem",
-                        fontWeight: 500,
-                        "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          border: "none",
-                        },
-                        "& .Mui-focused": {
-                          boxShadow: "none",
-                        },
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          border: "none",
-                        },
-                      }}
                     />
                   </div>
 
                   <div className={inputBox}>
                     <label className={labelStyle}>Subcategory:</label>
-                    <FormSelect
-                      label="SubCategory"
+                    <FormSelectGroup
                       value={editDetails.subCategory}
                       onChange={(e) =>
                         setEditDetails({
@@ -271,33 +183,67 @@ export default function TransactionList({
                             : expenseOption[editDetails.category] || []
                           : []
                       }
-                      sx={{
-                        border: "2px solid black",
-                        height: "44px",
-                        width: 330,
-                        marginLeft: 1,
-                        boxShadow: "4px 4px 0px 0px #000",
-                        fontSize: "1.125rem",
-                        fontWeight: 500,
-                        "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          border: "none",
-                        },
-                        "& .Mui-focused": {
-                          boxShadow: "none",
-                        },
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          border: "none",
-                        },
-                      }}
-                      className="w-80"
                     />
+                  </div>
+
+                  <div className={inputBox}>
+                    <label className={labelStyle}>Date:</label>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DateTimePicker
+                        value={
+                          editDetails.date ? dayjs(editDetails.date) : null
+                        } // ✅ Оборачиваем в dayjs или null
+                        onChange={(newValue) => {
+                          setEditDetails((prev) => ({
+                            ...prev,
+                            date: newValue, // ✅ Храним Dayjs объект (или строку при необходимости)
+                          }));
+                        }}
+                        referenceDate={dayjs()} // можно вообще убрать
+                        required
+                        slotProps={{
+                          textField: {
+                            variant: "standard",
+                            sx: {
+                              width: 327,
+                              height: "44px",
+                              border: "2px solid black",
+                              borderRadius: 0,
+                              boxShadow: "4px 4px 0px 0px #000",
+                              fontSize: "1.125rem",
+                              fontWeight: 500,
+                              marginLeft: 1,
+                              pl: 2,
+                              pt: 0.5,
+                              pr: 1,
+                              "& .MuiInput-underline:before, & .MuiInput-underline:after":
+                                {
+                                  borderBottom: "none",
+                                },
+                              "& .Mui-focused": {
+                                boxShadow: "none",
+                                borderColor: "black",
+                              },
+                              "&:hover": {
+                                boxShadow: "4px 4px 0px 0px #000",
+                                borderColor: "black",
+                              },
+                              "& input": {
+                                boxShadow: "none !important",
+                                borderRadius: 0,
+                                backgroundColor: "white !important",
+                              },
+                            },
+                          },
+                        }}
+                      />
+                    </LocalizationProvider>
                   </div>
 
                   {t.description ? (
                     <div className={inputBox}>
                       <label className={labelStyle}>Description:</label>
-                      <input
-                        type="text"
+                      <FormInputGroup
                         value={editDetails.description}
                         onChange={(e) =>
                           setEditDetails({
@@ -305,15 +251,14 @@ export default function TransactionList({
                             description: e.target.value,
                           })
                         }
-                        className={`${inputStyle} ml-2 w-82`}
+                        type="text"
                       />
                     </div>
                   ) : addDescription === t.id ? (
                     <div className={inputBox}>
                       <label className={labelStyle}>Description:</label>
                       <div className="flex flex-row">
-                        <input
-                          type="text"
+                        <FormInputGroup
                           value={editDetails.description}
                           onChange={(e) =>
                             setEditDetails({
@@ -321,7 +266,7 @@ export default function TransactionList({
                               description: e.target.value,
                             })
                           }
-                          className={`${inputStyle} ml-2 w-82`}
+                          type="text"
                         />
                         <button
                           className={`${buttonStyleDelete}`}
@@ -341,49 +286,24 @@ export default function TransactionList({
                   )}
 
                   {t.payment ? (
-                    <div className={inputBox}>
+                    <div className={`${inputBox} mt-2`}>
                       <label className={labelStyle}>Type of transaction</label>
-                      <FormControl
-                        sx={{
-                          border: "2px solid black",
-                          height: "44px",
-                          width: 327,
-                          marginLeft: 1,
-                          boxShadow: "4px 4px 0px 0px #000",
-                          fontSize: "1.125rem",
-                          fontWeight: 500,
-                          "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                            border: "none",
-                          },
-                          "& .Mui-focused": {
-                            boxShadow: "none",
-                          },
-                          "& .MuiOutlinedInput-notchedOutline": {
-                            border: "none",
-                          },
-                        }}
-                        className="w-80"
-                        size="small"
-                      >
-                        <InputLabel
-                          id="demo-select-small-label"
-                          sx={{
-                            // Add top margin when label is shrunk
-                            "&.MuiInputLabel-shrink": {
-                              top: 1, // value for more/less gap
-                            },
-                            // Optionally, adjust default position too
-                            top: 1,
-                            background: "#f1f2f6", //for better contrast
-                            px: 0.5, // horizontal padding
-                          }}
-                        >
-                          Select:{" "}
-                        </InputLabel>
-                        <Select
-                          labelId="demo-select-small-label"
-                          id="demo-select-small"
-                          label="Type"
+                      <FormSelectGroup
+                        value={editDetails.payment}
+                        onChange={(e) =>
+                          setEditDetails({
+                            ...editDetails,
+                            payment: e.target.value,
+                          })
+                        }
+                        options={financeType}
+                      />
+                    </div>
+                  ) : addFinanceType === t.id ? (
+                    <div className={`${inputBox} mt-2 `}>
+                      <label className={labelStyle}>Type of transaction</label>
+                      <div className="flex flex-row">
+                        <FormSelectGroup
                           value={editDetails.payment}
                           onChange={(e) =>
                             setEditDetails({
@@ -391,81 +311,8 @@ export default function TransactionList({
                               payment: e.target.value,
                             })
                           }
-                        >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
-                          {financeType.map((pay) => (
-                            <MenuItem key={pay} value={pay}>
-                              {pay}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </div>
-                  ) : addFinanceType === t.id ? (
-                    <div className={inputBox}>
-                      <label className={labelStyle}>Type of transaction</label>
-                      <div className="flex flex-row">
-                        <FormControl
-                          sx={{
-                            border: "2px solid black",
-                            height: "44px",
-                            width: 327,
-                            marginLeft: 1,
-                            boxShadow: "4px 4px 0px 0px #000",
-                            fontSize: "1.125rem",
-                            fontWeight: 500,
-                            "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                              border: "none",
-                            },
-                            "& .Mui-focused": {
-                              boxShadow: "none",
-                            },
-                            "& .MuiOutlinedInput-notchedOutline": {
-                              border: "none",
-                            },
-                          }}
-                          className="w-80"
-                          size="small"
-                        >
-                          <InputLabel
-                            id="demo-select-small-label"
-                            sx={{
-                              // Add top margin when label is shrunk
-                              "&.MuiInputLabel-shrink": {
-                                top: 1, // value for more/less gap
-                              },
-                              // Optionally, adjust default position too
-                              top: 1,
-                              background: "#f1f2f6", //for better contrast
-                              px: 0.5, // horizontal padding
-                            }}
-                          >
-                            Select:{" "}
-                          </InputLabel>
-                          <Select
-                            labelId="demo-select-small-label"
-                            id="demo-select-small"
-                            label="Type"
-                            value={editDetails.payment}
-                            onChange={(e) =>
-                              setEditDetails({
-                                ...editDetails,
-                                payment: e.target.value,
-                              })
-                            }
-                          >
-                            <MenuItem value="">
-                              <em>None</em>
-                            </MenuItem>
-                            {financeType.map((pay) => (
-                              <MenuItem key={pay} value={pay}>
-                                {pay}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
+                          options={financeType}
+                        />
                         <button
                           className={`${buttonStyleDelete} ml-3`}
                           onClick={() => setAddFinanceType(null)}
@@ -483,7 +330,7 @@ export default function TransactionList({
                     </button>
                   )}
 
-                  <div className="mb-5 mt-5">
+                  <div className="mb-5 mt-8">
                     <button
                       type="submit"
                       className={`${buttonStyleGreen} mr-4 px-3`}

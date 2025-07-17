@@ -1,27 +1,23 @@
 import React, { useState } from "react";
 import { useShared } from "../../parts/shared";
-import FormSelect from "./categories";
 import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { Link } from "react-router-dom";
 import "../../css/main.css";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
 import generalStyle from "../../css/generalStyle";
 import AttachMoneyRoundedIcon from "@mui/icons-material/AttachMoneyRounded";
 import AnnouncementRoundedIcon from "@mui/icons-material/AnnouncementRounded";
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import { expenseOption, incomeOption, financeType } from "../../parts/options";
+import FormSelectGroup from "../../parts/input/FormSelectGroup";
+import FormInputGroup from "../../parts/input/FormInputGroup";
 
 const formLabel = "text-3xl font-mono mb-7";
 const rowType = "flex flex-row";
 
-const { inputStyle, buttonStyleGreen, noTransactions, inputBox, labelStyle } =
-  generalStyle;
+const { buttonStyleGreen, noTransactions, inputBox, labelStyle } = generalStyle;
 
 export default function Transaction() {
   const { balance, setBalance, setTransaction, transaction } = useShared();
@@ -82,63 +78,16 @@ export default function Transaction() {
 
             <div className={inputBox}>
               <label className={labelStyle}>Transaction Type:</label>
-              <FormControl
-                sx={{
-                  border: "2px solid black",
-                  height: "44px",
-                  width: 327,
-                  marginLeft: 1,
-                  boxShadow: "4px 4px 0px 0px #000",
-                  fontSize: "1.125rem",
-                  fontWeight: 500,
-                  "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    border: "none",
-                  },
-                  "& .Mui-focused": {
-                    boxShadow: "none",
-                  },
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    border: "none",
-                  },
-                }}
-                size="small"
-                className="w-80"
-              >
-                <InputLabel
-                  id="demo-select-small-label"
-                  sx={{
-                    // Add top margin when label is shrunk (floating)
-                    "&.MuiInputLabel-shrink": {
-                      top: 1, // adjust this value for more/less gap
-                    },
-                    // Optionally, adjust default position too
-                    top: 1,
-                    background: "#f1f2f6", // optional, for better contrast
-                    px: 0.5, // optional, horizontal padding
-                  }}
-                >
-                  Select:{" "}
-                </InputLabel>
-                <Select
-                  labelId="demo-select-small-label"
-                  id="demo-select-small"
-                  value={type}
-                  label="Type"
-                  onChange={(e) => setType(e.target.value)}
-                  required
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value="income">Income</MenuItem>
-                  <MenuItem value="expense">Expense</MenuItem>
-                </Select>
-              </FormControl>
+              <FormSelectGroup
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+                options={["income", "expense"]}
+              />
             </div>
 
             <div className={`${inputBox} relative items-center`}>
               <label className={`${labelStyle} mr-70`}>Amount:</label>
-              <span className="absolute left-2 top-9 text-gray-500">
+              <span className="absolute left-2.5 top-9 text-gray-500">
                 <AttachMoneyRoundedIcon
                   className={
                     type === "income"
@@ -149,19 +98,16 @@ export default function Transaction() {
                   }
                 />
               </span>
-              <input
-                type="number"
+              <FormInputGroup
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className={`${inputStyle} ml-2 w-82 pl-4.5`}
-                required
+                type="number"
               />
             </div>
 
             <div className={inputBox}>
               <label className={labelStyle}>Category:</label>
-              <FormSelect
-                label="Category"
+              <FormSelectGroup
                 value={category}
                 onChange={(e) => {
                   setCategory(e.target.value);
@@ -172,31 +118,12 @@ export default function Transaction() {
                     ? Object.keys(incomeOption)
                     : Object.keys(expenseOption)
                 }
-                sx={{
-                  border: "2px solid black",
-                  height: "44px",
-                  width: 330,
-                  marginLeft: 1,
-                  boxShadow: "4px 4px 0px 0px #000",
-                  fontSize: "1.125rem",
-                  fontWeight: 500,
-                  "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    border: "none",
-                  },
-                  "& .Mui-focused": {
-                    boxShadow: "none",
-                  },
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    border: "none",
-                  },
-                }}
               />
             </div>
 
             <div className={inputBox}>
               <label className={labelStyle}>Subcategory:</label>
-              <FormSelect
-                label="SubCategory"
+              <FormSelectGroup
                 value={subCategory}
                 onChange={(e) => setSubCategory(e.target.value)}
                 options={
@@ -206,25 +133,6 @@ export default function Transaction() {
                       : expenseOption[category] || []
                     : []
                 }
-                sx={{
-                  border: "2px solid black",
-                  height: "44px",
-                  width: 330,
-                  marginLeft: 1,
-                  boxShadow: "4px 4px 0px 0px #000",
-                  fontSize: "1.125rem",
-                  fontWeight: 500,
-                  "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    border: "none",
-                  },
-                  "& .Mui-focused": {
-                    boxShadow: "none",
-                  },
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    border: "none",
-                  },
-                }}
-                className="w-80"
               />
             </div>
 
@@ -241,7 +149,7 @@ export default function Transaction() {
                     textField: {
                       variant: "standard",
                       sx: {
-                        width: 330,
+                        width: 327,
                         height: "44px",
                         border: "2px solid black",
                         borderRadius: 0,
@@ -287,70 +195,20 @@ export default function Transaction() {
 
             <div className={inputBox}>
               <label className={labelStyle}>Description:</label>
-              <input
-                type="text"
+              <FormInputGroup
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className={`${inputStyle} ml-2 w-82`}
+                type="text"
               />
             </div>
 
             <div className={inputBox}>
               <label className={labelStyle}>Type of transaction</label>
-              <FormControl
-                sx={{
-                  border: "2px solid black",
-                  height: "44px",
-                  width: 327,
-                  marginLeft: 1,
-                  boxShadow: "4px 4px 0px 0px #000",
-                  fontSize: "1.125rem",
-                  fontWeight: 500,
-                  "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    border: "none",
-                  },
-                  "& .Mui-focused": {
-                    boxShadow: "none",
-                  },
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    border: "none",
-                  },
-                }}
-                className="w-80"
-                size="small"
-              >
-                <InputLabel
-                  id="demo-select-small-label"
-                  sx={{
-                    // Add top margin when label is shrunk
-                    "&.MuiInputLabel-shrink": {
-                      top: 1, // value for more/less gap
-                    },
-                    // Optionally, adjust default position too
-                    top: 1,
-                    background: "#f1f2f6", //for better contrast
-                    px: 0.5, // horizontal padding
-                  }}
-                >
-                  Select:{" "}
-                </InputLabel>
-                <Select
-                  labelId="demo-select-small-label"
-                  id="demo-select-small"
-                  label="Type"
-                  value={payment}
-                  onChange={(e) => setPayment(e.target.value)}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  {financeType.map((pay) => (
-                    <MenuItem key={pay} value={pay}>
-                      {pay}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <FormSelectGroup
+                value={payment}
+                onChange={(e) => setPayment(e.target.value)}
+                options={financeType}
+              />
             </div>
           </div>
         </div>
