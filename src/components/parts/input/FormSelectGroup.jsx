@@ -11,7 +11,7 @@ export default function FormSelectGroup({
   value,
   onChange,
   options,
-  required = true,
+  // required = true,
   selectLabel = "Select:",
   menuItemNone = true,
   formControlSx = {
@@ -53,7 +53,7 @@ export default function FormSelectGroup({
           value={value}
           //   label={label}
           onChange={onChange}
-          required={required}
+          // required={required}
           {...rest}
         >
           {menuItemNone && (
@@ -77,7 +77,7 @@ FormSelectGroup.propTypes = {
   value: PropTypes.any.isRequired,
   onChange: PropTypes.func.isRequired,
   options: PropTypes.array.isRequired,
-  required: PropTypes.bool,
+  // required: PropTypes.bool,
   selectLabel: PropTypes.string,
   menuItemNone: PropTypes.bool,
   formControlSx: PropTypes.object,

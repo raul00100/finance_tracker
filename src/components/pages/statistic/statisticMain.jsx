@@ -2,12 +2,14 @@ import * as React from "react";
 import BalanceLineChart from "./lineChart";
 import PieActiveArc from "./pieChart";
 import MostLeast from "./mostLeat";
+import generalStyle from "../../css/generalStyle";
 
+const { indent } = generalStyle;
 const label = "text-xl italic mb-5";
 
 export default function Statistics() {
   return (
-    <div className="mb-20 mr-15 mt-5">
+    <div className={indent}>
       <MostLeast />
       <div className="flex flex-col">
         <div>

@@ -44,34 +44,35 @@ export default function MostLeast() {
   const [value, setValue] = React.useState(0);
   const { transaction, allExpense, allIncome } = useShared();
 
-  // Защита от не-массивов
-  const safeIncome = Array.isArray(allIncome) ? allIncome : [];
-  const safeExpense = Array.isArray(allExpense) ? allExpense : [];
-
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
-  const biggestIncome = safeIncome.reduce(
+  const incomeTransactions = transaction.filter((t) => t.type === "income");
+  const expenseTransactions = transaction.filter((t) => t.type === "expense");
+
+  const biggestIncome = incomeTransactions.reduce(
     (max, t) => (t.amount > max.amount ? t : max),
     { amount: 0 }
   );
   const lowestIncome =
-    safeIncome.length > 1
-      ? safeIncome.reduce((min, t) => (t.amount < min.amount ? t : min), {
-          amount: Infinity,
-        })
+    incomeTransactions.length > 1
+      ? incomeTransactions.reduce(
+          (min, t) => (t.amount < min.amount ? t : min),
+          { amount: Infinity }
+        )
       : ""; // Set to null if there is only one income transaction
 
-  const biggestExpense = safeExpense.reduce(
+  const biggestExpense = expenseTransactions.reduce(
     (max, t) => (t.amount > max.amount ? t : max),
     { amount: 0 }
   );
   const lowestExpense =
-    safeExpense.length > 1
-      ? safeExpense.reduce((min, t) => (t.amount < min.amount ? t : min), {
-          amount: Infinity,
-        })
+    expenseTransactions.length > 1
+      ? expenseTransactions.reduce(
+          (min, t) => (t.amount < min.amount ? t : min),
+          { amount: Infinity }
+        )
       : ""; // Set to null if there is only one expense transaction
 
   if (transaction.length === 0) {
@@ -153,7 +154,14 @@ export default function MostLeast() {
                 <span className={text}>Date: </span>{" "}
                 {biggestExpense.date &&
                 !isNaN(new Date(biggestExpense.date).getTime())
-                  ? `${new Date(biggestExpense.date).toLocaleDateString()}, ${new Date(biggestExpense.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+                  ? `${new Date(
+                      biggestExpense.date
+                    ).toLocaleDateString()}, ${new Date(
+                      biggestExpense.date
+                    ).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}`
                   : "No date available"}
               </p>
             </div>
@@ -176,7 +184,14 @@ export default function MostLeast() {
                     <span className={text}>Date: </span>{" "}
                     {lowestExpense.date &&
                     !isNaN(new Date(lowestExpense.date).getTime())
-                      ? `${new Date(lowestExpense.date).toLocaleDateString()}, ${new Date(lowestExpense.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+                      ? `${new Date(
+                          lowestExpense.date
+                        ).toLocaleDateString()}, ${new Date(
+                          lowestExpense.date
+                        ).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}`
                       : "No date available"}
                   </p>
                 </div>
@@ -231,7 +246,14 @@ export default function MostLeast() {
                 <span className={text}>Date: </span>{" "}
                 {biggestIncome.date &&
                 !isNaN(new Date(biggestIncome.date).getTime())
-                  ? `${new Date(biggestIncome.date).toLocaleDateString()}, ${new Date(biggestIncome.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+                  ? `${new Date(
+                      biggestIncome.date
+                    ).toLocaleDateString()}, ${new Date(
+                      biggestIncome.date
+                    ).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}`
                   : "No date available"}{" "}
               </p>
             </div>
@@ -254,7 +276,14 @@ export default function MostLeast() {
                     <span className={text}>Date: </span>{" "}
                     {lowestIncome.date &&
                     !isNaN(new Date(lowestIncome.date).getTime())
-                      ? `${new Date(lowestIncome.date).toLocaleDateString()}, ${new Date(lowestIncome.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+                      ? `${new Date(
+                          lowestIncome.date
+                        ).toLocaleDateString()}, ${new Date(
+                          lowestIncome.date
+                        ).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}`
                       : "No date available"}{" "}
                   </p>
                 </div>
@@ -315,7 +344,14 @@ export default function MostLeast() {
                 <span className={text}>Date: </span>{" "}
                 {biggestIncome.date &&
                 !isNaN(new Date(biggestIncome.date).getTime())
-                  ? `${new Date(biggestIncome.date).toLocaleDateString()}, ${new Date(biggestIncome.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+                  ? `${new Date(
+                      biggestIncome.date
+                    ).toLocaleDateString()}, ${new Date(
+                      biggestIncome.date
+                    ).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}`
                   : "No date available"}{" "}
               </p>
             </div>
@@ -339,7 +375,14 @@ export default function MostLeast() {
                     <span className={text}>Date: </span>{" "}
                     {lowestIncome.date &&
                     !isNaN(new Date(lowestIncome.date).getTime())
-                      ? `${new Date(lowestIncome.date).toLocaleDateString()}, ${new Date(lowestIncome.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+                      ? `${new Date(
+                          lowestIncome.date
+                        ).toLocaleDateString()}, ${new Date(
+                          lowestIncome.date
+                        ).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}`
                       : "No date available"}{" "}
                   </p>
                 </div>
@@ -370,7 +413,14 @@ export default function MostLeast() {
                 <span className={text}>Date: </span>{" "}
                 {biggestExpense.date &&
                 !isNaN(new Date(biggestExpense.date).getTime())
-                  ? `${new Date(biggestExpense.date).toLocaleDateString()}, ${new Date(biggestExpense.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+                  ? `${new Date(
+                      biggestExpense.date
+                    ).toLocaleDateString()}, ${new Date(
+                      biggestExpense.date
+                    ).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}`
                   : "No date available"}
               </p>
             </div>
@@ -393,7 +443,14 @@ export default function MostLeast() {
                     <span className={text}>Date: </span>{" "}
                     {lowestExpense.date &&
                     !isNaN(new Date(lowestExpense.date).getTime())
-                      ? `${new Date(lowestExpense.date).toLocaleDateString()}, ${new Date(lowestExpense.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+                      ? `${new Date(
+                          lowestExpense.date
+                        ).toLocaleDateString()}, ${new Date(
+                          lowestExpense.date
+                        ).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}`
                       : "No date available"}
                   </p>
                 </div>

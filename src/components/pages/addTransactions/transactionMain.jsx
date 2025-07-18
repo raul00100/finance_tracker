@@ -17,7 +17,8 @@ import FormInputGroup from "../../parts/input/FormInputGroup";
 const formLabel = "text-3xl font-mono mb-7";
 const rowType = "flex flex-row";
 
-const { buttonStyleGreen, noTransactions, inputBox, labelStyle } = generalStyle;
+const { buttonStyleGreen, noTransactions, inputBox, labelStyle, indent } =
+  generalStyle;
 
 export default function Transaction() {
   const { balance, setBalance, setTransaction, transaction } = useShared();
@@ -67,9 +68,9 @@ export default function Transaction() {
   };
 
   return (
-    <div>
+    <div className={indent}>
       {/* INPUT DIV */}
-      <form onSubmit={handleTransaction} className={`${inputBox} mb-15 mt-10`}>
+      <form onSubmit={handleTransaction} className={`${inputBox} mb-15`}>
         {/* Form Content */}
         <div className={`${rowType} justify-center gap-40 `}>
           {/* General Section */}
@@ -82,6 +83,7 @@ export default function Transaction() {
                 value={type}
                 onChange={(e) => setType(e.target.value)}
                 options={["income", "expense"]}
+                required
               />
             </div>
 
@@ -93,8 +95,8 @@ export default function Transaction() {
                     type === "income"
                       ? "text-[#3F7D58]"
                       : type === "expense"
-                        ? "text-[#EC5228]"
-                        : ""
+                      ? "text-[#EC5228]"
+                      : ""
                   }
                 />
               </span>
@@ -102,6 +104,7 @@ export default function Transaction() {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 type="number"
+                required
               />
             </div>
 
@@ -118,6 +121,7 @@ export default function Transaction() {
                     ? Object.keys(incomeOption)
                     : Object.keys(expenseOption)
                 }
+                required
               />
             </div>
 
@@ -133,6 +137,7 @@ export default function Transaction() {
                       : expenseOption[category] || []
                     : []
                 }
+                required
               />
             </div>
 
@@ -270,7 +275,12 @@ export default function Transaction() {
                     <p>
                       <strong>Date:</strong>{" "}
                       {t.date && !isNaN(new Date(t.date).getTime())
-                        ? `${new Date(t.date).toLocaleDateString()}, ${new Date(t.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+                        ? `${new Date(t.date).toLocaleDateString()}, ${new Date(
+                            t.date
+                          ).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}`
                         : "No date available"}
                     </p>
                     {t.payment && (

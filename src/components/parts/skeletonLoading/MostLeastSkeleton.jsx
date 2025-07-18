@@ -8,7 +8,7 @@ export default function MostLeastSkeleton() {
     <div className={`${outerSkeleton} w-[360px] `}>
       <div className={`${innerSkeleton} space-y-4`}>
         <div className="font-semibold mb-1">
-          <p>No transactions yet, add one</p>
+          <p>No transactions of the required type</p>
         </div>
         <div className="h-2 bg-gray-300 rounded w-1/3 mb-2 mt-1"></div>
         <div className="h-2 bg-gray-300 rounded w-1/3 mb-2 mt-1"></div>

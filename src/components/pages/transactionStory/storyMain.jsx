@@ -3,6 +3,9 @@ import { useShared } from "../../parts/shared";
 import TransactionList from "./transactionList";
 import TransactionTabs from "./transactionTab";
 import { expenseOption, incomeOption, financeType } from "../../parts/options";
+import generalStyle from "../../css/generalStyle";
+
+const { indent } = generalStyle;
 
 export default function Story() {
   const { balance, setBalance, transaction, setTransaction } = useShared();
@@ -111,7 +114,7 @@ export default function Story() {
   ));
 
   return (
-    <div className="mt-5">
+    <div className={indent}>
       <TransactionTabs
         tabValue={tabValue}
         handleTabChange={handleTabChange}

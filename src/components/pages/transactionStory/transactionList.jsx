@@ -137,8 +137,8 @@ export default function TransactionList({
                                   editDetails.type === "income"
                                     ? "#3F7D58"
                                     : editDetails.type === "expense"
-                                      ? "#EC5228"
-                                      : undefined,
+                                    ? "#EC5228"
+                                    : undefined,
                               }}
                             />
                           </InputAdornment>
@@ -358,8 +358,7 @@ export default function TransactionList({
                         </p>
                         <p>
                           {" "}
-                          <span className={spanStyle}>Amount:</span> $
-                          {t.amount}{" "}
+                          <span className={spanStyle}>Amount:</span> ${t.amount}{" "}
                         </p>
                         <p>
                           {" "}
@@ -421,7 +420,11 @@ export default function TransactionList({
                       <div className="mt-2 flex flex-row gap-5 flex-1">
                         <p className="mb-2.5 mt-1">
                           <span
-                            className={`${t.type === "income" ? "text-[#3F7D58]" : "text-[#EC5228]"} font-medium`}
+                            className={`${
+                              t.type === "income"
+                                ? "text-[#3F7D58]"
+                                : "text-[#EC5228]"
+                            } font-medium`}
                           >
                             <span className="relative top-0.5">
                               {" "}
@@ -445,13 +448,17 @@ export default function TransactionList({
                       </div>
                       <div className="mb-2 mr-2">
                         <button
-                          className={`${hovered === t.id ? "opacity-100" : "opacity-0"} ${buttonStyleGreen} mr-4 px-3 py-0.5`}
+                          className={`${
+                            hovered === t.id ? "opacity-100" : "opacity-0"
+                          } ${buttonStyleGreen} mr-4 px-3 py-0.5`}
                           onClick={() => handleShowMore(t.id)}
                         >
                           Show more
                         </button>
                         <button
-                          className={`${hovered === t.id ? "opacity-100" : "opacity-0"} ${buttonStyleOrange} px-3 py-0.5`}
+                          className={`${
+                            hovered === t.id ? "opacity-100" : "opacity-0"
+                          } ${buttonStyleOrange} px-3 py-0.5`}
                           onClick={() => handleDelete(t.id)}
                         >
                           Delete
