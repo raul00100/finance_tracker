@@ -6,7 +6,7 @@ import generalStyle from "../../css/generalStyle";
 import Loading from "../../parts/loading";
 import HomeSkeleton from "../../parts/skeletonLoading/HomeSkeleton";
 import "../../css/slider.css";
-// import FormInputGroup from "../../parts/input/FormInputGroup";
+import { useQuery } from "@tanstack/react-query";
 
 async function currRates(baseCurrency = "USD") {
   const response = await fetch(
@@ -69,9 +69,19 @@ async function cryptoRates() {
 }
 
 // fetch crypto histories for the graph
-async function fetchAllCryptoHistories(
-  symbols = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "XRPUSDT", "ADAUSDT", "SUIUSDT"]
-) {
+async function fetchAllCryptoHistories(symbols) {
+  // Ensure symbols is always an array
+  const defaultSymbols = [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT",
+    "XRPUSDT",
+    "ADAUSDT",
+    "SUIUSDT",
+  ];
+  if (!Array.isArray(symbols)) {
+    symbols = defaultSymbols;
+  }
   const histories = {};
 
   for (const symbol of symbols) {
@@ -85,6 +95,7 @@ async function fetchAllCryptoHistories(
       continue; // Skip this symbol if there's an error
     }
     const data = await response.json();
+    // console.log(symbol, data); // посмотрите, что приходит
     histories[symbol] = data.map((item) => ({
       date: new Date(item[0]).toLocaleDateString(), // Convert timestamp to date
       price: parseFloat(item[4]), // Closing price
@@ -105,24 +116,8 @@ const inputStyle =
 export default function HomePage() {
   const { balance, setBalance } = useShared("");
   const [submitted, setSubmitted] = useState(false);
-  const [crypto, setCrypto] = useState({});
   const baseCurrency = "USD";
   const [selected, setSelected] = useState("USD");
-  const [rates, setRates] = useState(null);
-  const [error, setError] = useState(null);
-  const [cryptoHistories, setCryptoHistories] = useState({});
-  const [fiat, setFiat] = useState([]);
-
-  // Separate loading states for crypto and history
-  const [cryptoLoading, setCryptoLoading] = useState(true);
-  const [cryptoHistoryLoading, setCryptoHistoryLoading] = useState(true);
-  // Separate loading states for fiat and history
-  const [fiatLoading, setFiatLoading] = useState(true);
-  const [fiatHistoryLoading, setFiatHistoryLoading] = useState(true);
-
-  const handleBalance = (e) => {
-    setBalance(e.target.value);
-  };
 
   useEffect(() => {
     const savedSub = localStorage.getItem("submitted");
@@ -135,93 +130,71 @@ export default function HomePage() {
     localStorage.setItem("submitted", submitted);
   }, [submitted]);
 
-  useEffect(() => {
-    const loadCurrencyData = async () => {
-      setFiatLoading(true);
-      try {
-        const data = await currRates(baseCurrency);
-        const displayCurrencies = ["USD", "EUR", "GBP", "JPY"];
+  const {
+    data: fiatRates,
+    isLoading: fiatLoading,
+    error: fiatError,
+  } = useQuery({
+    queryKey: ["fiatRates", baseCurrency],
+    queryFn: () => currRates(baseCurrency),
+  });
 
-        const filteredRates = {};
-        displayCurrencies.forEach((currency) => {
-          if (data.rates[currency]) {
-            filteredRates[currency] = data.rates[currency];
-          }
-        });
-        setRates(filteredRates);
-      } catch (err) {
-        setError(err.message);
-        console.error("Fetch failed:", err);
-      } finally {
-        setFiatLoading(false);
-      }
-    };
+  const {
+    data: fiatHistory,
+    isLoading: fiatHistoryLoading,
+    error: fiatHistoryError,
+  } = useQuery({
+    queryKey: ["fiatHistory", baseCurrency],
+    queryFn: () =>
+      fetchFiatHistory(
+        baseCurrency,
+        ["EUR", "GBP", "JPY"],
+        "2025-04-01",
+        "2025-05-31"
+      ),
+  });
 
-    loadCurrencyData();
-  }, [baseCurrency]);
+  const {
+    data: cryptoData,
+    isLoading: cryptoLoading,
+    error: cryptoError,
+  } = useQuery({
+    queryKey: ["cryptoRates"],
+    queryFn: cryptoRates,
+  });
 
-  useEffect(() => {
-    const targetCurrencies = ["EUR", "GBP", "JPY"];
-    setFiatHistoryLoading(true);
-    const loadFiat = async () => {
-      try {
-        const data = await fetchFiatHistory(
-          "USD",
-          targetCurrencies,
-          "2023-01-01",
-          "2023-01-31"
-        );
-        setFiat(data);
-      } catch (err) {
-        setError(err);
-        console.error("error fetching fiat history", err);
-      } finally {
-        setFiatHistoryLoading(false);
-      }
-    };
-    loadFiat();
-  }, []);
-
-  useEffect(() => {
-    const loadCryptoData = async () => {
-      setCryptoLoading(true);
-      try {
-        const data = await cryptoRates();
-        const formattedPrices = {};
-        data.forEach((item) => {
-          const coin = item.symbol.replace("USDT", "").toLowerCase();
-          formattedPrices[coin] = parseFloat(item.price).toFixed(2);
-        });
-        setCrypto(formattedPrices);
-      } catch (err) {
-        setError(err.message);
-        console.error("Fetch failed:", err);
-      } finally {
-        setCryptoLoading(false);
-      }
-    };
-    loadCryptoData();
-  }, []);
-
-  useEffect(() => {
-    const loadAllCryptoHistories = async () => {
-      setCryptoHistoryLoading(true);
-      try {
-        const data = await fetchAllCryptoHistories();
-        setCryptoHistories(data);
-      } catch (err) {
-        setError(err.message);
-        console.error("Error fetching crypto histories:", err);
-      } finally {
-        setCryptoHistoryLoading(false);
-      }
-    };
-    loadAllCryptoHistories();
-  }, []);
+  const {
+    data: cryptoHistories,
+    isLoading: cryptoHistoryLoading,
+    error: cryptoHistoryError,
+  } = useQuery({
+    queryKey: ["cryptoHistory"],
+    queryFn: fetchAllCryptoHistories,
+  });
 
   const handleClick = (currency) => {
     setSelected(currency);
   };
+
+  const handleBalance = (e) => {
+    setBalance(e.target.value);
+  };
+
+  const rates = fiatRates?.rates
+    ? ["USD", "EUR", "GBP", "JPY"].reduce((acc, cur) => {
+        acc[cur] = fiatRates.rates[cur];
+        return acc;
+      }, {})
+    : null;
+
+  const crypto = cryptoData
+    ? cryptoData.reduce((acc, item) => {
+        acc[item.symbol.replace("USDT", "").toLowerCase()] = parseFloat(
+          item.price
+        ).toFixed(2);
+        return acc;
+      }, {})
+    : {};
 
   const convertedBalance =
     selected === baseCurrency
@@ -230,13 +203,42 @@ export default function HomePage() {
           (balance * rates[selected]).toFixed(2)
         );
 
-  if (error) return <div className="error">Error: {error}</div>;
-  if (!rates)
+  // gather error
+  const firstError =
+    fiatError || fiatHistoryError || cryptoError || cryptoHistoryError;
+  if (firstError) {
+    return (
+      <div className="error">
+        Error: {firstError.message || String(firstError)}
+      </div>
+    );
+  }
+
+  // global loading fallback (optional)
+  if (
+    fiatLoading ||
+    fiatHistoryLoading ||
+    cryptoLoading ||
+    cryptoHistoryLoading
+  ) {
     return (
       <div className="flex flex-col items-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <Loading />
       </div>
     );
+  }
+  if (
+    fiatLoading ||
+    fiatHistoryLoading ||
+    cryptoLoading ||
+    cryptoHistoryLoading
+  ) {
+    return (
+      <div className="flex flex-col items-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -320,12 +322,8 @@ export default function HomePage() {
         <div className="currency-marquee mb-20">
           <div className="currency-track">
             {/* Первый проход */}
-            {Object.entries(cryptoHistories).map(([symbol, history]) => (
-              <div
-                // className="currency-item shadow-[4px_4px_0px_0px_#000]"
-                className={box}
-                key={`a-${symbol}`}
-              >
+            {Object.entries(cryptoHistories || {}).map(([symbol, history]) => (
+              <div className={box} key={`a-${symbol}`}>
                 <h3>
                   {symbol.replace("USDT", "")}: $
                   {crypto[symbol.replace("USDT", "").toLowerCase()]}
@@ -338,8 +336,8 @@ export default function HomePage() {
             ))}
 
             {/* Второй (дубликат) для бесшовной прокрутки */}
-            {Object.entries(cryptoHistories).map(([symbol, history]) => (
-              <div className={box} key={`b-${symbol}`}>
+            {Object.entries(cryptoHistories || {}).map(([symbol, history]) => (
+              <div className={box} key={` b-${symbol} `}>
                 <h3>
                   {symbol.replace("USDT", "")}: $
                   {crypto[symbol.replace("USDT", "").toLowerCase()]}
@@ -361,13 +359,10 @@ export default function HomePage() {
         <div className="currency-marquee mb-20">
           <div className="currency-track-reverse">
             {/* Первый проход */}
-            {fiat.map((currencyData) => (
+            {fiatHistory.map((currencyData) => (
               <div className={box} key={currencyData.currency}>
                 <h3>
-                  {baseCurrency} ={" "}
-                  {rates && rates[currencyData.currency]
-                    ? rates[currencyData.currency]
-                    : ""}{" "}
+                  {baseCurrency} = {rates?.[currencyData.currency] || ""}{" "}
                   {currencyData.currency}
                 </h3>
                 <CryptoLineGraph
@@ -377,13 +372,10 @@ export default function HomePage() {
               </div>
             ))}
             {/* Второй (дубликат) для бесшовной прокрутки */}
-            {fiat.map((currencyData) => (
+            {fiatHistory.map((currencyData) => (
               <div className={box} key={currencyData.currency}>
                 <h3>
-                  {baseCurrency} ={" "}
-                  {rates && rates[currencyData.currency]
-                    ? rates[currencyData.currency]
-                    : ""}{" "}
+                  {baseCurrency} = {rates?.[currencyData.currency] || ""}{" "}
                   {currencyData.currency}
                 </h3>
                 <CryptoLineGraph
@@ -393,13 +385,10 @@ export default function HomePage() {
               </div>
             ))}
             {/* третий дубль */}
-            {fiat.map((currencyData) => (
+            {fiatHistory.map((currencyData) => (
               <div className="currency-item" key={currencyData.currency}>
                 <h3>
-                  {baseCurrency} ={" "}
-                  {rates && rates[currencyData.currency]
-                    ? rates[currencyData.currency]
-                    : ""}{" "}
+                  {baseCurrency} = {rates?.[currencyData.currency] || ""}{" "}
                   {currencyData.currency}
                 </h3>
                 <CryptoLineGraph

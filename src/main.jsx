@@ -8,8 +8,8 @@ import Story from "./components/pages/transactionStory/storyMain";
 import Statistics from "./components/pages/statistic/statisticMain";
 import ErrorHandler from "./components/parts/errorHandler";
 import "./index.css";
-
-// import { ChakraProvider } from "@chakra-ui/react";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./components/parts/queryClient";
 
 import { SharedProvider } from "./components/parts/shared";
 
@@ -30,10 +30,10 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    {/* <ChakraProvider> */}
-    <SharedProvider>
-      <RouterProvider router={router} />
-    </SharedProvider>
-    {/* </ChakraProvider> */}
+    <QueryClientProvider client={queryClient}>
+      <SharedProvider>
+        <RouterProvider router={router} />
+      </SharedProvider>
+    </QueryClientProvider>
   </React.StrictMode>
 );
