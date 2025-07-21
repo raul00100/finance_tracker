@@ -8,12 +8,18 @@ import generalStyle from "../../css/generalStyle";
 const { indent } = generalStyle;
 
 export default function Story() {
-  const { balance, setBalance, transaction, setTransaction } = useShared();
+  const { balance, updateBalance, transaction, updateTransactions } =
+    useShared();
+
   const [editId, setEditId] = useState(null);
   const [editDetails, setEditDetails] = useState({
     type: "",
     amount: "",
     category: "",
+    subCategory: "",
+    date: null,
+    payment: "",
+    description: "",
   });
   const [tabValue, setTabValue] = useState(0);
 
@@ -26,73 +32,95 @@ export default function Story() {
     if (tabIdx === 1) return transaction.filter((t) => t.type === "income");
     return transaction.filter((t) => t.type === "expense");
   };
+
+  // Удалить все транзакции и откатить баланс
   const handleDeleteAll = () => {
     const totalIncome = transaction
       .filter((t) => t.type === "income")
-      .reduce((sum, t) => sum + t.amount, 0);
+      .reduce((sum, t) => sum + Number(t.amount), 0);
     const totalExpense = transaction
       .filter((t) => t.type === "expense")
-      .reduce((sum, t) => sum + t.amount, 0);
+      .reduce((sum, t) => sum + Number(t.amount), 0);
 
-    const newBalance = balance - totalIncome + totalExpense;
-    setBalance(newBalance);
-    localStorage.setItem("balance", newBalance);
-
-    setTransaction([]);
-    localStorage.removeItem("transaction");
+    // Вернуть деньги: вычесть доходы, прибавить расходы
+    const newBalance = Number(balance) - totalIncome + totalExpense;
+    updateBalance(newBalance);
+    updateTransactions([]);
   };
 
+  // Удаление одной транзакции
   const handleDelete = (id) => {
-    const newTransaction = transaction.filter((t) => t.id !== id);
-    setTransaction(newTransaction);
-    localStorage.setItem("transaction", JSON.stringify(newTransaction));
-    const deletedTransaction = transaction.find((t) => t.id === id);
-    let newBalance = balance;
-    if (deletedTransaction.type === "income") {
-      newBalance -= deletedTransaction.amount;
+    const txToDelete = transaction.find((t) => t.id === id);
+    if (!txToDelete) return;
+
+    const remaining = transaction.filter((t) => t.id !== id);
+    updateTransactions(remaining);
+
+    let newBalance = Number(balance);
+    if (txToDelete.type === "income") {
+      newBalance -= Number(txToDelete.amount);
     } else {
-      newBalance += deletedTransaction.amount;
+      newBalance += Number(txToDelete.amount);
     }
-    setBalance(newBalance);
-    localStorage.setItem("balance", newBalance);
+    updateBalance(newBalance);
   };
 
+  // Начать редактирование
   const handleEdit = (id) => {
-    const transactionToEdit = transaction.find((t) => t.id === id);
+    const tx = transaction.find((t) => t.id === id);
+    if (!tx) return;
     setEditId(id);
-    setEditDetails({ ...transactionToEdit });
+    setEditDetails({ ...tx });
   };
 
+  // Submit редактирования
   const handleEditSubmit = (e) => {
     e.preventDefault();
+    if (editId == null) return;
 
-    const originalTransaction = transaction.find((t) => t.id === editId);
-    let newBalance = balance;
-    if (originalTransaction.type === "income") {
-      newBalance -= originalTransaction.amount;
+    const original = transaction.find((t) => t.id === editId);
+    if (!original) return;
+
+    // Пересчитать баланс: убрать старую транзакцию, добавить новую
+    let newBalance = Number(balance);
+    if (original.type === "income") {
+      newBalance -= Number(original.amount);
     } else {
-      newBalance += originalTransaction.amount;
+      newBalance += Number(original.amount);
     }
 
+    const editedAmount = Number(editDetails.amount);
     if (editDetails.type === "income") {
-      newBalance += Number(editDetails.amount);
+      newBalance += editedAmount;
     } else {
-      newBalance -= Number(editDetails.amount);
+      newBalance -= editedAmount;
     }
 
-    const updatedTransaction = transaction.map((t) =>
+    const updated = transaction.map((t) =>
       t.id === editId
-        ? { ...t, ...editDetails, amount: Number(editDetails.amount) }
+        ? {
+            ...t,
+            ...editDetails,
+            amount: editedAmount,
+            // date уже timestamp или null (TransactionList нормализует)
+          }
         : t
     );
-    setTransaction(updatedTransaction);
-    localStorage.setItem("transaction", JSON.stringify(updatedTransaction));
 
-    setBalance(newBalance);
-    localStorage.setItem("balance", newBalance);
+    updateTransactions(updated);
+    updateBalance(newBalance);
 
+    // Сброс состояния редактирования
     setEditId(null);
-    setEditDetails({ type: "", amount: "", category: "" });
+    setEditDetails({
+      type: "",
+      amount: "",
+      category: "",
+      subCategory: "",
+      date: null,
+      payment: "",
+      description: "",
+    });
   };
 
   const panels = [0, 1, 2].map((tabIdx) => (

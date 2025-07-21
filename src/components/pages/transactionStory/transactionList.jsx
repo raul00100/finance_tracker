@@ -57,7 +57,6 @@ export default function TransactionList({
   financeType,
   setEditId,
 }) {
-  // const {transaction} = useShared();
   const [hovered, setHovered] = useState(null);
   const [more, setMore] = useState(null);
   const [addDescription, setAddDescription] = useState(null);
@@ -123,16 +122,14 @@ export default function TransactionList({
                           <InputAdornment
                             position="start"
                             sx={{
-                              marginTop: "0px", // поднимает или опускает иконку
-                              // marginLeft: '0px', // сдвигает иконку вправо/влево
+                              marginTop: "0px",
                               marginBottom: 1.2,
-                              marginLeft: "-33px", // сдвигает иконку максимально влево
-                              // можно добавить другие параметры
+                              marginLeft: "-33px",
                             }}
                           >
                             <AttachMoneyRoundedIcon
                               sx={{
-                                fontSize: 25, // размер иконки
+                                fontSize: 25,
                                 color:
                                   editDetails.type === "income"
                                     ? "#3F7D58"
@@ -191,15 +188,17 @@ export default function TransactionList({
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DateTimePicker
                         value={
-                          editDetails.date ? dayjs(editDetails.date) : null
-                        } // ✅ Оборачиваем в dayjs или null
+                          editDetails.date
+                            ? dayjs(Number(editDetails.date))
+                            : null
+                        }
                         onChange={(newValue) => {
                           setEditDetails((prev) => ({
                             ...prev,
-                            date: newValue, // ✅ Храним Dayjs объект (или строку при необходимости)
+                            date: newValue ? newValue.valueOf() : null,
                           }));
                         }}
-                        referenceDate={dayjs()} // можно вообще убрать
+                        referenceDate={dayjs()}
                         required
                         slotProps={{
                           textField: {

@@ -21,7 +21,8 @@ const { buttonStyleGreen, noTransactions, inputBox, labelStyle, indent } =
   generalStyle;
 
 export default function Transaction() {
-  const { balance, setBalance, setTransaction, transaction } = useShared();
+  const { balance, updateBalance, updateTransactions, transaction } =
+    useShared();
   const [type, setType] = useState("");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
@@ -33,7 +34,7 @@ export default function Transaction() {
   const handleTransaction = (e) => {
     e.preventDefault();
 
-    const numericAmount = Number(amount); // Convert amount to a number
+    const numericAmount = Number(amount);
 
     if (isNaN(numericAmount) || numericAmount <= 0) {
       alert("Please enter a valid amount.");
@@ -43,7 +44,7 @@ export default function Transaction() {
     const newTransaction = {
       id: Date.now(),
       type,
-      amount: numericAmount, // Use the numeric value
+      amount: numericAmount,
       category,
       subCategory,
       date,
@@ -51,13 +52,14 @@ export default function Transaction() {
       description,
     };
 
-    setTransaction((prev) => [...prev, newTransaction]);
+    updateTransactions([...transaction, newTransaction]);
 
     if (type === "income") {
-      setBalance(Number(balance) + numericAmount); // Convert balance to a number
+      updateBalance(Number(balance) + numericAmount);
     } else {
-      setBalance(Number(balance) - numericAmount);
+      updateBalance(Number(balance) - numericAmount);
     }
+
     setType("");
     setAmount("");
     setCategory(null);
@@ -69,11 +71,8 @@ export default function Transaction() {
 
   return (
     <div className={indent}>
-      {/* INPUT DIV */}
       <form onSubmit={handleTransaction} className={`${inputBox} mb-15`}>
-        {/* Form Content */}
         <div className={`${rowType} justify-center gap-40 `}>
-          {/* General Section */}
           <div className="mb-8 ml-100">
             <h3 className={formLabel}>General</h3>
 
@@ -89,7 +88,7 @@ export default function Transaction() {
 
             <div className={`${inputBox} relative items-center`}>
               <label className={`${labelStyle} mr-70`}>Amount:</label>
-              <span className="absolute left-2.5 top-9 text-gray-500">
+              <span className="absolute left-3 top-9 text-gray-500">
                 <AttachMoneyRoundedIcon
                   className={
                     type === "income"
@@ -149,7 +148,6 @@ export default function Transaction() {
                   onChange={setDate}
                   referenceDate={dayjs(Date.now())}
                   required
-                  // Use standard variant to avoid double border
                   slotProps={{
                     textField: {
                       variant: "standard",
@@ -165,22 +163,16 @@ export default function Transaction() {
                         pl: 2,
                         pt: 0.5,
                         pr: 1,
-                        // Remove underline for standard variant
                         "& .MuiInput-underline:before, & .MuiInput-underline:after":
-                          {
-                            borderBottom: "none",
-                          },
-                        // Remove focus highlight
+                          { borderBottom: "none" },
                         "& .Mui-focused": {
                           boxShadow: "none",
                           borderColor: "black",
                         },
-                        // Remove hover highlight
                         "&:hover": {
                           boxShadow: "4px 4px 0px 0px #000",
                           borderColor: "black",
                         },
-                        // Remove autofill background
                         "& input": {
                           boxShadow: "none !important",
                           borderRadius: 0,

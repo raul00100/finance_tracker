@@ -6,35 +6,47 @@ import LineSkeleton from "../../parts/skeletonLoading/lineSkeleton";
 export default function BalanceLineChart() {
   const { transaction, balance } = useShared();
 
-  if (transaction.length === 0 || transaction.length < 2) {
+  if (transaction.length === 0) {
+    // Если нет транзакций, показываем только текущий баланс
     return <LineSkeleton />;
   }
 
-  // Sort transactions by date
+  // Сортируем транзакции по дате
   const sortedTransactions = [...transaction].sort(
     (a, b) => new Date(a.date) - new Date(b.date)
   );
 
-  // Prepare the dataset for the line chart
-  const dataset = sortedTransactions.reduce(
-    (acc, t) => {
-      const previousBalance = acc.length > 0 ? acc[acc.length - 1].y : 0;
-      const newBalance =
-        t.type === "income"
-          ? previousBalance + t.amount
-          : previousBalance - t.amount;
+  // Определяем стартовый баланс (до первой транзакции)
+  // Если пользователь вручную меняет баланс, предполагаем, что balance — это актуальный баланс после всех транзакций
+  // Поэтому стартовый баланс = balance - сумма всех транзакций
+  const totalDelta = sortedTransactions.reduce((acc, t) => {
+    return t.type === "income" ? acc + t.amount : acc - t.amount;
+  }, 0);
+  const startBalance = balance - totalDelta;
 
-      // Use timestamps for the x-axis
+  // Формируем точки для графика
+  let runningBalance = startBalance;
+  const dataset = [
+    {
+      x:
+        sortedTransactions[0].date &&
+        !isNaN(new Date(sortedTransactions[0].date).getTime())
+          ? new Date(sortedTransactions[0].date)
+          : new Date(),
+      y: startBalance,
+    },
+    ...sortedTransactions.map((t) => {
+      runningBalance =
+        t.type === "income"
+          ? runningBalance + t.amount
+          : runningBalance - t.amount;
       const timestamp =
         t.date && !isNaN(new Date(t.date).getTime())
           ? new Date(t.date)
-          : new Date(); // Fallback to the current date if t.date is invalid
-
-      acc.push({ x: timestamp, y: newBalance });
-      return acc;
-    },
-    [{ x: new Date(sortedTransactions[0].date), y: balance }] // Start with the initial balance at the earliest transaction date
-  );
+          : new Date();
+      return { x: timestamp, y: runningBalance };
+    }),
+  ];
 
   return (
     <div style={{ width: "100%", height: "600px" }}>

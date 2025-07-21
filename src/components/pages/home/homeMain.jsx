@@ -9,13 +9,10 @@ import "../../css/slider.css";
 import { useQuery } from "@tanstack/react-query";
 
 async function currRates(baseCurrency = "USD") {
-  const response = await fetch(
-    `https://open.er-api.com/v6/latest/${baseCurrency}`
-  );
-  if (!response.ok) {
-    throw new Error(`Error fetching currency data: ${response.statusText}`);
-  }
-  return await response.json();
+  const res = await fetch(`https://open.er-api.com/v6/latest/${baseCurrency}`);
+  if (!res.ok)
+    throw new Error(`Error fetching currency data: ${res.statusText}`);
+  return res.json();
 }
 
 async function fetchFiatHistory(
@@ -24,30 +21,24 @@ async function fetchFiatHistory(
   startDate,
   endDate
 ) {
-  const response = await fetch(
+  const res = await fetch(
     `https://api.frankfurter.app/${startDate}..${endDate}?from=${baseCurrency}&to=${targetCurrencies.join(
       ","
     )}`
   );
-  if (!response.ok) {
-    throw new Error(`Error fetching the fiat data: ${response.statusText}`);
-  }
-  const data = await response.json();
-  if (!data.rates) {
-    throw new Error("Invalid API response: 'rates' is missing");
-  }
-  // Transform the rates into the desired format
-  const transformedData = targetCurrencies.map((currency) => ({
+  if (!res.ok)
+    throw new Error(`Error fetching the fiat data: ${res.statusText}`);
+  const data = await res.json();
+  if (!data.rates) throw new Error("Invalid API response: 'rates' is missing");
+  return targetCurrencies.map((currency) => ({
     currency,
     data: Object.entries(data.rates).map(([date, rate]) => ({
       date,
       price: rate[currency],
     })),
   }));
-  return transformedData;
 }
 
-//show actual crypto rates
 async function cryptoRates() {
   const symbols = JSON.stringify([
     "BTCUSDT",
@@ -57,21 +48,17 @@ async function cryptoRates() {
     "ADAUSDT",
     "SUIUSDT",
   ]);
-  const response = await fetch(
+  const res = await fetch(
     `https://api.binance.com/api/v3/ticker/price?symbols=${encodeURIComponent(
       symbols
     )}`
   );
-  if (!response.ok) {
-    throw new Error(`Error fetching crypto data: ${response.statusText}`);
-  }
-  return await response.json();
+  if (!res.ok) throw new Error(`Error fetching crypto data: ${res.statusText}`);
+  return res.json();
 }
 
-// fetch crypto histories for the graph
 async function fetchAllCryptoHistories(symbols) {
-  // Ensure symbols is always an array
-  const defaultSymbols = [
+  const defaults = [
     "BTCUSDT",
     "ETHUSDT",
     "SOLUSDT",
@@ -79,57 +66,56 @@ async function fetchAllCryptoHistories(symbols) {
     "ADAUSDT",
     "SUIUSDT",
   ];
-  if (!Array.isArray(symbols)) {
-    symbols = defaultSymbols;
-  }
-  const histories = {};
-
+  if (!Array.isArray(symbols)) symbols = defaults;
+  const out = {};
   for (const symbol of symbols) {
-    const response = await fetch(
+    const res = await fetch(
       `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1d&limit=30`
     );
-    if (!response.ok) {
+    if (!res.ok) {
       console.error(
-        `Error fetching historical data for ${symbol}: ${response.statusText}`
+        `Error fetching historical data for ${symbol}: ${res.statusText}`
       );
-      continue; // Skip this symbol if there's an error
+      continue;
     }
-    const data = await response.json();
-    // console.log(symbol, data); // посмотрите, что приходит
-    histories[symbol] = data.map((item) => ({
-      date: new Date(item[0]).toLocaleDateString(), // Convert timestamp to date
-      price: parseFloat(item[4]), // Closing price
+    const data = await res.json();
+    out[symbol] = data.map((item) => ({
+      date: new Date(item[0]).toLocaleDateString(),
+      price: parseFloat(item[4]),
     }));
   }
-
-  return histories; // Return an object with historical data for all symbols
+  return out;
 }
 
 const box = "currency-item";
 const header = "font-mono text-xl mb-10 ml-10";
 const rowObj = "flex flex-row";
-
 const { buttonStyleGreen } = generalStyle;
 const inputStyle =
   "border-black border-2 h-11 mr-3 pl-4 shadow-[4px_4px_0px_0px_#000] text-lg font-medium";
 
 export default function HomePage() {
-  const { balance, setBalance } = useShared("");
-  const [submitted, setSubmitted] = useState(false);
+  const { balance, updateBalance } = useShared();
+  const [submitted, setSubmitted] = useState(() => {
+    const saved = localStorage.getItem("submitted");
+    if (saved !== null) return saved === "true";
+    return Number(balance) > 0;
+  });
   const baseCurrency = "USD";
   const [selected, setSelected] = useState("USD");
+  // локальное состояние для input
+  const [inputBalance, setInputBalance] = useState(balance);
 
   useEffect(() => {
-    const savedSub = localStorage.getItem("submitted");
-    if (savedSub) {
-      setSubmitted(savedSub);
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("submitted", submitted);
+    localStorage.setItem("submitted", String(submitted));
   }, [submitted]);
 
+  useEffect(() => {
+    if (Number(balance) > 0 && !submitted) setSubmitted(true);
+    if (Number(balance) === 0 && submitted) setSubmitted(false);
+  }, [balance]);
+
+  // queries
   const {
     data: fiatRates,
     isLoading: fiatLoading,
@@ -172,12 +158,11 @@ export default function HomePage() {
     queryFn: fetchAllCryptoHistories,
   });
 
-  const handleClick = (currency) => {
-    setSelected(currency);
-  };
+  const handleClick = (currency) => setSelected(currency);
 
+  // теперь просто обновляет локальное состояние
   const handleBalance = (e) => {
-    setBalance(e.target.value);
+    setInputBalance(e.target.value);
   };
 
   const rates = fiatRates?.rates
@@ -197,13 +182,12 @@ export default function HomePage() {
     : {};
 
   const convertedBalance =
-    selected === baseCurrency
-      ? new Intl.NumberFormat("en-US", { useGrouping: true }).format(balance)
-      : new Intl.NumberFormat("en-US", { useGrouping: true }).format(
+    rates && selected !== baseCurrency
+      ? new Intl.NumberFormat("en-US", { useGrouping: true }).format(
           (balance * rates[selected]).toFixed(2)
-        );
+        )
+      : new Intl.NumberFormat("en-US", { useGrouping: true }).format(balance);
 
-  // gather error
   const firstError =
     fiatError || fiatHistoryError || cryptoError || cryptoHistoryError;
   if (firstError) {
@@ -214,19 +198,6 @@ export default function HomePage() {
     );
   }
 
-  // global loading fallback (optional)
-  if (
-    fiatLoading ||
-    fiatHistoryLoading ||
-    cryptoLoading ||
-    cryptoHistoryLoading
-  ) {
-    return (
-      <div className="flex flex-col items-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-        <Loading />
-      </div>
-    );
-  }
   if (
     fiatLoading ||
     fiatHistoryLoading ||
@@ -247,23 +218,24 @@ export default function HomePage() {
           <h1 className={`${rowObj} font-bold text-3xl mt-7 font-mono mb-6`}>
             Balance in{" "}
             <ul className={rowObj}>
-              {Object.keys(rates).map((currency) => (
-                <li
-                  key={currency}
-                  onClick={() => handleClick(currency)}
-                  className={`cursor-pointer ${
-                    selected === currency
-                      ? "underline"
-                      : "hover:scale-110 transition"
-                  } ml-4`}
-                  style={{
-                    color: selected === currency ? "green" : "black",
-                    fontWeight: selected === currency ? "bold" : "normal",
-                  }}
-                >
-                  {currency}
-                </li>
-              ))}
+              {rates &&
+                Object.keys(rates).map((currency) => (
+                  <li
+                    key={currency}
+                    onClick={() => handleClick(currency)}
+                    className={`cursor-pointer ${
+                      selected === currency
+                        ? "underline"
+                        : "hover:scale-110 transition"
+                    } ml-4`}
+                    style={{
+                      color: selected === currency ? "green" : "black",
+                      fontWeight: selected === currency ? "bold" : "normal",
+                    }}
+                  >
+                    {currency}
+                  </li>
+                ))}
             </ul>
           </h1>
 
@@ -292,7 +264,7 @@ export default function HomePage() {
               </span>
               <input
                 type="number"
-                value={balance}
+                value={inputBalance}
                 onChange={handleBalance}
                 className={`${inputStyle} pl-7.5`}
               />
@@ -300,12 +272,12 @@ export default function HomePage() {
             <button
               className={`${buttonStyleGreen} h-11 bg-[#3F7D58] active:bg-emerald-600 px-3`}
               onClick={() => {
-                if (!balance || isNaN(balance) || balance <= 0) {
-                  alert(
-                    "you broke ass, enter a valid number for your balance 😩"
-                  );
+                const n = Number(inputBalance);
+                if (!Number.isFinite(n) || n < 0) {
+                  alert("enter a valid number for your balance");
                   return;
                 }
+                updateBalance(n);
                 setSubmitted(true);
               }}
             >
@@ -321,7 +293,6 @@ export default function HomePage() {
       ) : (
         <div className="currency-marquee mb-20">
           <div className="currency-track">
-            {/* Первый проход */}
             {Object.entries(cryptoHistories || {}).map(([symbol, history]) => (
               <div className={box} key={`a-${symbol}`}>
                 <h3>
@@ -334,8 +305,6 @@ export default function HomePage() {
                 />
               </div>
             ))}
-
-            {/* Второй (дубликат) для бесшовной прокрутки */}
             {Object.entries(cryptoHistories || {}).map(([symbol, history]) => (
               <div className={box} key={` b-${symbol} `}>
                 <h3>
@@ -358,7 +327,6 @@ export default function HomePage() {
       ) : (
         <div className="currency-marquee mb-20">
           <div className="currency-track-reverse">
-            {/* Первый проход */}
             {fiatHistory.map((currencyData) => (
               <div className={box} key={currencyData.currency}>
                 <h3>
@@ -371,9 +339,8 @@ export default function HomePage() {
                 />
               </div>
             ))}
-            {/* Второй (дубликат) для бесшовной прокрутки */}
             {fiatHistory.map((currencyData) => (
-              <div className={box} key={currencyData.currency}>
+              <div className={box} key={`dup1-${currencyData.currency}`}>
                 <h3>
                   {baseCurrency} = {rates?.[currencyData.currency] || ""}{" "}
                   {currencyData.currency}
@@ -384,9 +351,11 @@ export default function HomePage() {
                 />
               </div>
             ))}
-            {/* третий дубль */}
             {fiatHistory.map((currencyData) => (
-              <div className="currency-item" key={currencyData.currency}>
+              <div
+                className="currency-item"
+                key={`dup2-${currencyData.currency}`}
+              >
                 <h3>
                   {baseCurrency} = {rates?.[currencyData.currency] || ""}{" "}
                   {currencyData.currency}
