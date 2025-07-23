@@ -23,10 +23,10 @@ const {
 } = generalStyle;
 
 const spanStyle = "font-semibold";
-const buttonStyleDelete =
-  "text-white ml-3 border-black bg-red-600 px-3 h-11 active:bg-red-400 font-bold shadow-[4px_4px_0px_0px_#000] bg-[#EC5228] active:bg-orange-400 active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all duration-200 cursor-pointer border-2";
+// const buttonStyleOrange =
+// "text-white ml-3 border-black bg-red-600 px-3 h-11 active:bg-red-400 font-bold shadow-[4px_4px_0px_0px_#000] bg-red-600 active:bg-orange-400 active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all duration-200 cursor-pointer border-2";
 const buttonStyleAdd =
-  "text-white m-2 border-black bg-zinc-400 hover:bg-[#3F7D58] active:bg-emerald-600 px-3 mb-2 font-bold shadow-[4px_4px_0px_0px_#000] bg-[#EC5228] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all duration-200 cursor-pointer border-2";
+  "text-white m-2 border-black bg-zinc-400 hover:bg-green-700 active:bg-green-600 px-3 mb-2 font-bold shadow-[4px_4px_0px_0px_#000] bg-red-600 active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all duration-200 cursor-pointer border-2";
 
 TransactionList.propTypes = {
   transactions: PropTypes.array.isRequired,
@@ -132,9 +132,9 @@ export default function TransactionList({
                                 fontSize: 25,
                                 color:
                                   editDetails.type === "income"
-                                    ? "#3F7D58"
+                                    ? "#15803D"
                                     : editDetails.type === "expense"
-                                    ? "#EC5228"
+                                    ? "#DC2626"
                                     : undefined,
                               }}
                             />
@@ -268,7 +268,7 @@ export default function TransactionList({
                           type="text"
                         />
                         <button
-                          className={`${buttonStyleDelete}`}
+                          className={`${buttonStyleOrange} ml-3 p-2`}
                           onClick={() => setAddDescription(null)}
                         >
                           Delete
@@ -313,7 +313,7 @@ export default function TransactionList({
                           options={financeType}
                         />
                         <button
-                          className={`${buttonStyleDelete} ml-3`}
+                          className={`${buttonStyleOrange} ml-3 p-2`}
                           onClick={() => setAddFinanceType(null)}
                         >
                           Delete
@@ -332,14 +332,14 @@ export default function TransactionList({
                   <div className="mb-5 mt-8">
                     <button
                       type="submit"
-                      className={`${buttonStyleGreen} mr-4 px-3`}
+                      className={`${buttonStyleGreen} mr-4 px-4 py-0.5`}
                     >
                       Save
                     </button>
                     <button
                       type="button"
                       onClick={() => setEditId(null)}
-                      className={`${buttonStyleOrange} px-3`}
+                      className={`${buttonStyleOrange} px-4 py-0.5`}
                     >
                       Cancel
                     </button>
@@ -399,13 +399,13 @@ export default function TransactionList({
                       </div>
                       <div className="mb-3 mt-3">
                         <button
-                          className={`${buttonStyleGreen} bg-[#3F7D58] active:bg-emerald-600 mr-4 px-3 `}
+                          className={`${buttonStyleGreen} mr-4 px-4 `}
                           onClick={() => handleEdit(t.id)}
                         >
                           Edit
                         </button>
                         <button
-                          className={`${buttonStyleOrange} bg-[#EC5228] active:bg-orange-400 px-3`}
+                          className={`${buttonStyleOrange} px-4`}
                           onClick={() => setMore(null)}
                         >
                           Hide
@@ -414,15 +414,19 @@ export default function TransactionList({
                     </div>
                   ) : (
                     <div
-                      className={`flex flex-row border-b-2 items-center py-1 hover:py-4 transition-all duration-300`}
+                      className={`flex flex-row border-b-2 items-center py-1 hover:py-4 transition-all duration-300 pl-3 ${
+                        t.type === "income"
+                          ? "hover:bg-green-50"
+                          : "hover:bg-red-50"
+                      }`}
                     >
                       <div className="mt-2 flex flex-row gap-5 flex-1">
                         <p className="mb-2.5 mt-1">
                           <span
                             className={`${
                               t.type === "income"
-                                ? "text-[#3F7D58]"
-                                : "text-[#EC5228]"
+                                ? "text-green-700"
+                                : "text-red-600"
                             } font-medium`}
                           >
                             <span className="relative top-0.5">

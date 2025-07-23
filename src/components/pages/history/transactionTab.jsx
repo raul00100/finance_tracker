@@ -47,14 +47,15 @@ export default function TransactionTabs({ tabValue, handleTabChange, panels }) {
           aria-label="transaction tabs"
           sx={{
             "& .MuiTab-root": {
+              fontFamily: "monospace",
               fontWeight: 600, // Make all tab labels thicker
             },
             "& .MuiTab-root.Mui-selected": {
-              color: "#EF9651", // Tailwind indigo-500 hex
+              color: "#4316bf", // Tailwind indigo-500 hex
               fontWeight: 700, // Even bolder for selected tab
             },
             "& .MuiTabs-indicator": {
-              backgroundColor: "#EC5228", // indicator color
+              backgroundColor: "#4316bf", // indicator color
             },
           }}
         >

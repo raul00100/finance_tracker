@@ -5,7 +5,7 @@ import MostLeast from "./mostLeat";
 import generalStyle from "../../css/generalStyle";
 
 const { indent } = generalStyle;
-const label = "text-xl italic mb-5";
+const label = "text-xl font-mono mb-5";
 
 export default function Statistics() {
   return (

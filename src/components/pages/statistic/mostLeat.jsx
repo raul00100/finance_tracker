@@ -86,13 +86,14 @@ export default function MostLeast() {
             className="mt-5"
             sx={{
               "& .MuiTabs-indicator": {
-                backgroundColor: "#EC5228",
+                backgroundColor: "#4316bf",
               },
               "& .MuiTab-root": {
-                color: "#EC5228",
+                fontFamily: "monospace",
+                color: "#4316bf",
               },
               "& .Mui-selected": {
-                color: "#EC5228 !important",
+                color: "#4316bf !important",
               },
             }}
           >
@@ -119,13 +120,14 @@ export default function MostLeast() {
             aria-label="basic tabs example"
             sx={{
               "& .MuiTabs-indicator": {
-                backgroundColor: "#EC5228",
+                backgroundColor: "#4316bf",
               },
               "& .MuiTab-root": {
-                color: "#EC5228",
+                fontFamily: "monospace",
+                color: "#4316bf",
               },
               "& .Mui-selected": {
-                color: "#EC5228 !important",
+                color: "#4316bf !important",
               },
             }}
           >
@@ -214,13 +216,14 @@ export default function MostLeast() {
             aria-label="basic tabs example"
             sx={{
               "& .MuiTabs-indicator": {
-                backgroundColor: "#EC5228",
+                backgroundColor: "#4316bf",
               },
               "& .MuiTab-root": {
-                color: "#EC5228",
+                fontFamily: "monospace",
+                color: "#4316bf",
               },
               "& .Mui-selected": {
-                color: "#EC5228 !important",
+                color: "#4316bf !important",
               },
             }}
           >
@@ -310,13 +313,14 @@ export default function MostLeast() {
             aria-label="basic tabs example"
             sx={{
               "& .MuiTabs-indicator": {
-                backgroundColor: "#EC5228",
+                backgroundColor: "#4316bf",
               },
               "& .MuiTab-root": {
-                color: "#EC5228",
+                fontFamily: "monospace",
+                color: "#4316bf",
               },
               "& .Mui-selected": {
-                color: "#EC5228 !important",
+                color: "#4316bf !important",
               },
             }}
           >

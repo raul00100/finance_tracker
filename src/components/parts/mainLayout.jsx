@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 
 export default function MainLayout() {
   return (
-    <div className="bg-[#EFEFEF] h-screen flex">
+    <div className="bg-[#f4efe4] h-screen flex">
       <div className="flex w-[180px]">
         <VerticalTabs />
       </div>

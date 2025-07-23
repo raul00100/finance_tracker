@@ -35,7 +35,7 @@ export default function FormSelectGroup({
   inputLabelSx = {
     "&.MuiInputLabel-shrink": { top: 1 },
     top: 1,
-    background: "#f1f2f6",
+    background: "#f4efe4",
     px: 0.5,
   },
   ...rest

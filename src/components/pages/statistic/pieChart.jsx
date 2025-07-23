@@ -3,7 +3,7 @@ import { PieChart } from "@mui/x-charts/PieChart";
 import { useShared } from "../../parts/shared";
 import PieSkeleton from "../../parts/skeletonLoading/pieSkeleton";
 
-const box = "border-2 p-5 rounded-full bg-zinc-300 animate-pulse";
+const box = "border-2 p-5 rounded-full animate-pulse";
 
 export default function PieActiveArc() {
   const { allExpense, allIncome, transaction } = useShared();
@@ -50,6 +50,7 @@ export default function PieActiveArc() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            backgroundColor: "#ebeceeff",
           }}
         >
           <PieSkeleton label="Not enough data to come up with statistic" />
@@ -62,6 +63,7 @@ export default function PieActiveArc() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            backgroundColor: "#ebeceeff",
           }}
         >
           <PieSkeleton label="Not enough data to come up with statistic" />
@@ -98,6 +100,7 @@ export default function PieActiveArc() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            backgroundColor: "#ebeceeff",
           }}
         >
           <PieSkeleton label="Not enough data to come up with statistic" />
@@ -115,6 +118,7 @@ export default function PieActiveArc() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            backgroundColor: "#ebeceeff",
           }}
         >
           <PieSkeleton label="Not enough data to come up with statistic" />

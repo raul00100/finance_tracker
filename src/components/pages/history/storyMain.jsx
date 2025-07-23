@@ -35,6 +35,8 @@ export default function Story() {
 
   // Удалить все транзакции и откатить баланс
   const handleDeleteAll = () => {
+    if (!window.confirm("Are you sure you want to delete ALL transactions?"))
+      return;
     const totalIncome = transaction
       .filter((t) => t.type === "income")
       .reduce((sum, t) => sum + Number(t.amount), 0);
@@ -50,6 +52,8 @@ export default function Story() {
 
   // Удаление одной транзакции
   const handleDelete = (id) => {
+    if (!window.confirm("Are you sure you want to delete this transaction?"))
+      return;
     const txToDelete = transaction.find((t) => t.id === id);
     if (!txToDelete) return;
 

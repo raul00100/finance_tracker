@@ -41,7 +41,7 @@ export default function VerticalTabs() {
         flexGrow: 1,
         bgcolor: "background.paper",
         display: "flex",
-        backgroundColor: "#EF9651",
+        backgroundColor: "#4316bf",
       }}
     >
       <Tabs
@@ -66,6 +66,7 @@ export default function VerticalTabs() {
           icon={<HomeIcon />}
           iconPosition="end"
           sx={{
+            fontFamily: "monospace",
             color: currentTab === 0 ? "#ffffff" : "#e3d5ff",
             fontWeight: currentTab === 0 ? 700 : 500,
             textDecoration: currentTab === 0 ? "underline" : "none",
@@ -84,6 +85,7 @@ export default function VerticalTabs() {
           icon={<ReceiptLongIcon />}
           iconPosition="end"
           sx={{
+            fontFamily: "monospace",
             color: currentTab === 1 ? "#ffffff" : "#e3d5ff",
             fontWeight: currentTab === 1 ? 700 : 500,
             textDecoration: currentTab === 1 ? "underline" : "none",
@@ -102,6 +104,7 @@ export default function VerticalTabs() {
           icon={<RestoreIcon />}
           iconPosition="end"
           sx={{
+            fontFamily: "monospace",
             color: currentTab === 2 ? "#ffffff" : "#e3d5ff",
             fontWeight: currentTab === 2 ? 700 : 500,
             textDecoration: currentTab === 2 ? "underline" : "none",
@@ -120,6 +123,7 @@ export default function VerticalTabs() {
           icon={<BarChartIcon />}
           iconPosition="end"
           sx={{
+            fontFamily: "monospace",
             color: currentTab === 3 ? "#ffffff" : "#e3d5ff",
             fontWeight: currentTab === 3 ? 700 : 500,
             textDecoration: currentTab === 3 ? "underline" : "none",

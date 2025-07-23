@@ -5,8 +5,9 @@ import AttachMoneyRoundedIcon from "@mui/icons-material/AttachMoneyRounded";
 import generalStyle from "../../css/generalStyle";
 import Loading from "../../parts/loading";
 import HomeSkeleton from "../../parts/skeletonLoading/HomeSkeleton";
-import "../../css/slider.css";
+// import "../../css/slider.css";
 import { useQuery } from "@tanstack/react-query";
+import { InfiniteSlider } from "../../motion-primitives/infinite-slider";
 
 async function currRates(baseCurrency = "USD") {
   const res = await fetch(`https://open.er-api.com/v6/latest/${baseCurrency}`);
@@ -87,12 +88,18 @@ async function fetchAllCryptoHistories(symbols) {
   return out;
 }
 
-const box = "currency-item";
-const header = "font-mono text-xl mb-10 ml-10";
-const rowObj = "flex flex-row";
+const box =
+  "border-2 border-black shadow-[4px_4px_0px_0px_#000] flex flex-col p-4 hover:shadow-[8px_8px_0px_black] hover:-translate-x-1 hover:-transalte-y-1 transition-all bg-zinc-100 hover:bg-white";
+const sliderStyle = "p-3 mb-20";
+const header = "font-mono text-2xl mb-7 font-mdeium ml-10";
+const rowObj = "flex flex-row transition-all ";
 const { buttonStyleGreen } = generalStyle;
 const inputStyle =
   "border-black border-2 h-11 mr-3 pl-4 shadow-[4px_4px_0px_0px_#000] text-lg font-medium";
+const graphHeader = "font-mono text-lg";
+const price = "font-sans";
+
+// const dayn = true;
 
 export default function HomePage() {
   const { balance, updateBalance } = useShared();
@@ -211,6 +218,14 @@ export default function HomePage() {
     );
   }
 
+  // if (dayn) {
+  //   return (
+  //     <div className="flex flex-col items-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+  //       <Loading />
+  //     </div>
+  //   );
+  // }
+
   return (
     <div>
       {submitted ? (
@@ -223,7 +238,7 @@ export default function HomePage() {
                   <li
                     key={currency}
                     onClick={() => handleClick(currency)}
-                    className={`cursor-pointer ${
+                    className={`cursor-pointer font-mono ${
                       selected === currency
                         ? "underline"
                         : "hover:scale-110 transition"
@@ -256,17 +271,22 @@ export default function HomePage() {
         </div>
       ) : (
         <div className="mt-8 mb-21 ml-10">
-          <h2 className="text-2xl font-mono mb-6">Enter your balance:</h2>
+          <h2 className="text-3xl font-mono font-semibold mb-6">
+            Enter your balance:
+          </h2>
           <div className="flex flex-row">
             <div className="relative flex items-center">
-              <span className="absolute left-2 text-gray-500">
-                <AttachMoneyRoundedIcon className="text-lime-600" />
+              <span className="absolute left-0 text-gray-500">
+                <AttachMoneyRoundedIcon
+                  className="text-green-700"
+                  sx={{ fontSize: 30 }}
+                />
               </span>
               <input
                 type="number"
                 value={inputBalance}
                 onChange={handleBalance}
-                className={`${inputStyle} pl-7.5`}
+                className={`${inputStyle} pl-6`}
               />
             </div>
             <button
@@ -291,83 +311,98 @@ export default function HomePage() {
       {cryptoLoading || cryptoHistoryLoading ? (
         <HomeSkeleton />
       ) : (
-        <div className="currency-marquee mb-20">
-          <div className="currency-track">
-            {Object.entries(cryptoHistories || {}).map(([symbol, history]) => (
-              <div className={box} key={`a-${symbol}`}>
-                <h3>
-                  {symbol.replace("USDT", "")}: $
+        <InfiniteSlider className={sliderStyle} gap={30} speedOnHover={10}>
+          {Object.entries(cryptoHistories || {}).map(([symbol, history]) => (
+            <div className={box} key={`a-${symbol}`}>
+              <h3 className={graphHeader}>
+                {symbol.replace("USDT", "")} = $
+                <span className={price}>
+                  {" "}
+                  {crypto[symbol.replace("USDT", "").toLowerCase()]}{" "}
+                </span>
+              </h3>
+              <CryptoLineGraph
+                data={history}
+                label={symbol.replace("USDT", "")}
+              />
+            </div>
+          ))}
+          {Object.entries(cryptoHistories || {}).map(([symbol, history]) => (
+            <div className={box} key={` b-${symbol} `}>
+              <h3 className={graphHeader}>
+                {symbol.replace("USDT", "")} = $
+                <span className={price}>
                   {crypto[symbol.replace("USDT", "").toLowerCase()]}
-                </h3>
-                <CryptoLineGraph
-                  data={history}
-                  label={symbol.replace("USDT", "")}
-                />
-              </div>
-            ))}
-            {Object.entries(cryptoHistories || {}).map(([symbol, history]) => (
-              <div className={box} key={` b-${symbol} `}>
-                <h3>
-                  {symbol.replace("USDT", "")}: $
-                  {crypto[symbol.replace("USDT", "").toLowerCase()]}
-                </h3>
-                <CryptoLineGraph
-                  data={history}
-                  label={symbol.replace("USDT", "")}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
+                </span>
+              </h3>
+              <CryptoLineGraph
+                data={history}
+                label={symbol.replace("USDT", "")}
+              />
+            </div>
+          ))}
+        </InfiniteSlider>
       )}
 
       <h3 className={header}>The graph of fiat history</h3>
       {fiatLoading || fiatHistoryLoading ? (
         <HomeSkeleton />
       ) : (
-        <div className="currency-marquee mb-20">
-          <div className="currency-track-reverse">
-            {fiatHistory.map((currencyData) => (
-              <div className={box} key={currencyData.currency}>
-                <h3>
-                  {baseCurrency} = {rates?.[currencyData.currency] || ""}{" "}
-                  {currencyData.currency}
-                </h3>
-                <CryptoLineGraph
-                  data={currencyData.data}
-                  label={currencyData.currency}
-                />
-              </div>
-            ))}
-            {fiatHistory.map((currencyData) => (
-              <div className={box} key={`dup1-${currencyData.currency}`}>
-                <h3>
-                  {baseCurrency} = {rates?.[currencyData.currency] || ""}{" "}
-                  {currencyData.currency}
-                </h3>
-                <CryptoLineGraph
-                  data={currencyData.data}
-                  label={currencyData.currency}
-                />
-              </div>
-            ))}
-            {fiatHistory.map((currencyData) => (
-              <div
-                className="currency-item"
-                key={`dup2-${currencyData.currency}`}
-              >
-                <h3>
-                  {baseCurrency} = {rates?.[currencyData.currency] || ""}{" "}
-                  {currencyData.currency}
-                </h3>
-                <CryptoLineGraph
-                  data={currencyData.data}
-                  label={currencyData.currency}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
+        <InfiniteSlider
+          reverse
+          className={sliderStyle}
+          gap={30}
+          speedOnHover={10}
+        >
+          {fiatHistory.map((currencyData) => (
+            <div className={box} key={currencyData.currency}>
+              <h3 className={graphHeader}>
+                {baseCurrency} ={" "}
+                <span className={price}>
+                  {" "}
+                  {rates?.[currencyData.currency] || ""}{" "}
+                </span>
+                {currencyData.currency}
+              </h3>
+              <CryptoLineGraph
+                data={currencyData.data}
+                label={currencyData.currency}
+              />
+            </div>
+          ))}
+          {fiatHistory.map((currencyData) => (
+            <div className={box} key={`dup1-${currencyData.currency}`}>
+              <h3 className={graphHeader}>
+                {baseCurrency} ={" "}
+                <span className={price}>
+                  {" "}
+                  {rates?.[currencyData.currency] || ""}{" "}
+                </span>
+                {currencyData.currency}
+              </h3>
+              <CryptoLineGraph
+                data={currencyData.data}
+                label={currencyData.currency}
+              />
+            </div>
+          ))}
+          {fiatHistory.map((currencyData) => (
+            <div className={box} key={`dup2-${currencyData.currency}`}>
+              <h3 className={graphHeader}>
+                {baseCurrency} ={" "}
+                <span className={price}>
+                  {" "}
+                  {rates?.[currencyData.currency] || ""}{" "}
+                </span>
+                {currencyData.currency}
+              </h3>
+              <CryptoLineGraph
+                data={currencyData.data}
+                label={currencyData.currency}
+              />
+            </div>
+          ))}
+        </InfiniteSlider>
       )}
     </div>
   );

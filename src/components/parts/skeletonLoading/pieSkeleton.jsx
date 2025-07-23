@@ -9,7 +9,7 @@ export default function PieSkeleton({ label }) {
   const angles = [1, 2.5, 4];
   return (
     <svg width="350" height="350" viewBox="0 0 350 350">
-      <circle cx="175" cy="175" r="175" fill="#d4d4d8" />
+      <circle cx="175" cy="175" r="175" fill="#dbdfe5ff" />
       {angles.map((angle, i) => {
         const r = 195;
         const cx = 175;

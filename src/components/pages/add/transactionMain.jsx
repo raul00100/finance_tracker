@@ -88,13 +88,14 @@ export default function Transaction() {
 
             <div className={`${inputBox} relative items-center`}>
               <label className={`${labelStyle} mr-70`}>Amount:</label>
-              <span className="absolute left-3 top-9 text-gray-500">
+              <span className="absolute left-2.5 top-9 text-gray-500">
                 <AttachMoneyRoundedIcon
+                  sx={{ fontSize: 28 }}
                   className={
                     type === "income"
-                      ? "text-[#3F7D58]"
+                      ? "text-green-700"
                       : type === "expense"
-                      ? "text-[#EC5228]"
+                      ? "text-red-600"
                       : ""
                   }
                 />
@@ -200,7 +201,7 @@ export default function Transaction() {
             </div>
 
             <div className={inputBox}>
-              <label className={labelStyle}>Type of transaction</label>
+              <label className={labelStyle}>Type of finance</label>
               <FormSelectGroup
                 value={payment}
                 onChange={(e) => setPayment(e.target.value)}
@@ -238,13 +239,17 @@ export default function Transaction() {
                 .map((t) => (
                   <li
                     key={t.id}
-                    className="border-2 border-black mb-8 p-5 w-75 h-33 bg-zinc-200 hover:bg-zinc-100 ml-5 mr-5 font-mono shadow-[6px_6px_0px_black] hover:shadow-[8px_8px_0px_black]
-                        hover:-translate-x-1 hover:-transalte-y-1 transition-all duration-300"
+                    className={`border-2 border-black mb-8 p-5 w-75 h-33 ml-5 mr-5 font-mono shadow-[6px_6px_0px_black] hover:shadow-[8px_8px_0px_black]
+                        hover:-translate-x-1 hover:-transalte-y-1 transition-all duration-300 ${
+                          t.type === "income"
+                            ? "bg-green-50 hover:bg-green-100"
+                            : "bg-red-50 hover:bg-red-100"
+                        }`}
                   >
                     {t.type === "income" ? (
                       <p>
                         <strong>Type:</strong> {t.type}{" "}
-                        <span className="text-[#3F7D58] italic">
+                        <span className="text-green-700 font-sans">
                           {" "}
                           + {t.amount}{" "}
                         </span>{" "}
@@ -253,7 +258,7 @@ export default function Transaction() {
                       <p>
                         {" "}
                         <strong>Type:</strong> {t.type}{" "}
-                        <span className="text-[#EC5228] italic">
+                        <span className="text-red-600 font-sans">
                           {" "}
                           - {t.amount}
                         </span>{" "}
@@ -290,7 +295,7 @@ export default function Transaction() {
                 />
                 <Link
                   to="/story"
-                  className="animate-pulse text-2xl font-bold bg-gradient-to-r from-[#3F7D58] to-gray-900 bg-clip-text text-transparent hover:border-lime-700 hover:border-b-2 transition-all duration-100"
+                  className="animate-pulse text-2xl font-bold font-mono text-zinc-800 text-transparent hover:border-lime-700 hover:border-b-2 "
                 >
                   See more...
                 </Link>
